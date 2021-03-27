@@ -1,0 +1,5 @@
+# ignoring mesh Files
+*.boundary
+*.elements
+*.header
+*.nodes
