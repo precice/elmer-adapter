@@ -3,3 +3,8 @@
 *.elements
 *.header
 *.nodes
+*.names
+*.prof
+
+# ignoring results directory
+Results/
