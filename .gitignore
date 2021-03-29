@@ -6,5 +6,9 @@
 *.names
 *.prof
 
+# ignoring specific sif file
+entities.sif
+
 # ignoring results directory
 Results/
+build/
