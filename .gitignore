@@ -5,6 +5,7 @@
 *.nodes
 *.names
 *.prof
+*.out
 
 # ignoring specific sif file
 entities.sif
