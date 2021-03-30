@@ -6,6 +6,7 @@
 *.names
 *.prof
 *.out
+*.so
 
 # ignoring specific sif file
 entities.sif
