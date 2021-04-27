@@ -1,0 +1,448 @@
+{
+  "Finalized": "2021-04-16T12:01:42.957",
+  "Initialized": "2021-04-16T12:01:34.670",
+  "Name": "",
+  "Ranks": [
+    {
+      "Finalized": "2021-04-16T12:01:42.957",
+      "Initialized": "2021-04-16T12:01:34.670",
+      "StateChanges": [
+        {
+          "Name": "_GLOBAL",
+          "State": 1,
+          "Timestamp": 0
+        },
+        {
+          "Name": "_GLOBAL",
+          "State": 0,
+          "Timestamp": 8287
+        },
+        {
+          "Name": "advance",
+          "State": 1,
+          "Timestamp": 8237
+        },
+        {
+          "Name": "advance",
+          "State": 0,
+          "Timestamp": 8238
+        },
+        {
+          "Name": "advance/m2n.sendData",
+          "State": 1,
+          "Timestamp": 8237
+        },
+        {
+          "Name": "advance/m2n.sendData",
+          "State": 0,
+          "Timestamp": 8238
+        },
+        {
+          "Name": "advance/map.nn.computeMapping.FromNeumann-MeshToDirichlet-Mesh",
+          "State": 1,
+          "Timestamp": 8238
+        },
+        {
+          "Name": "advance/map.nn.computeMapping.FromNeumann-MeshToDirichlet-Mesh",
+          "State": 0,
+          "Timestamp": 8238
+        },
+        {
+          "Name": "advance/map.nn.computeMapping.FromNeumann-MeshToDirichlet-Mesh.getIndexOnVertices",
+          "State": 1,
+          "Timestamp": 8238
+        },
+        {
+          "Name": "advance/map.nn.computeMapping.FromNeumann-MeshToDirichlet-Mesh.getIndexOnVertices",
+          "State": 0,
+          "Timestamp": 8238
+        },
+        {
+          "Name": "advance/map.nn.mapData.FromNeumann-MeshToDirichlet-Mesh",
+          "State": 1,
+          "Timestamp": 8238
+        },
+        {
+          "Name": "advance/map.nn.mapData.FromNeumann-MeshToDirichlet-Mesh",
+          "State": 0,
+          "Timestamp": 8238
+        },
+        {
+          "Name": "configure",
+          "State": 1,
+          "Timestamp": 0
+        },
+        {
+          "Name": "configure",
+          "State": 0,
+          "Timestamp": 0
+        },
+        {
+          "Name": "finalize",
+          "State": 1,
+          "Timestamp": 8239
+        },
+        {
+          "Name": "finalize",
+          "State": 0,
+          "Timestamp": 8287
+        },
+        {
+          "Name": "initialize",
+          "State": 1,
+          "Timestamp": 1
+        },
+        {
+          "Name": "initialize",
+          "State": 0,
+          "Timestamp": 8237
+        },
+        {
+          "Name": "initialize/m2n.broadcastVertexDistributions",
+          "State": 1,
+          "Timestamp": 8155
+        },
+        {
+          "Name": "initialize/m2n.broadcastVertexDistributions",
+          "State": 0,
+          "Timestamp": 8155
+        },
+        {
+          "Name": "initialize/m2n.broadcastVertexDistributions",
+          "State": 1,
+          "Timestamp": 8231
+        },
+        {
+          "Name": "initialize/m2n.broadcastVertexDistributions",
+          "State": 0,
+          "Timestamp": 8231
+        },
+        {
+          "Name": "initialize/m2n.buildCommunicationMap",
+          "State": 1,
+          "Timestamp": 8155
+        },
+        {
+          "Name": "initialize/m2n.buildCommunicationMap",
+          "State": 0,
+          "Timestamp": 8155
+        },
+        {
+          "Name": "initialize/m2n.buildCommunicationMap",
+          "State": 1,
+          "Timestamp": 8231
+        },
+        {
+          "Name": "initialize/m2n.buildCommunicationMap",
+          "State": 0,
+          "Timestamp": 8231
+        },
+        {
+          "Name": "initialize/m2n.createCommunications",
+          "State": 1,
+          "Timestamp": 8155
+        },
+        {
+          "Name": "initialize/m2n.createCommunications",
+          "State": 0,
+          "Timestamp": 8172
+        },
+        {
+          "Name": "initialize/m2n.createCommunications",
+          "State": 1,
+          "Timestamp": 8231
+        },
+        {
+          "Name": "initialize/m2n.createCommunications",
+          "State": 0,
+          "Timestamp": 8236
+        },
+        {
+          "Name": "initialize/m2n.exchangeVertexDistribution",
+          "State": 1,
+          "Timestamp": 8108
+        },
+        {
+          "Name": "initialize/m2n.exchangeVertexDistribution",
+          "State": 0,
+          "Timestamp": 8155
+        },
+        {
+          "Name": "initialize/m2n.exchangeVertexDistribution",
+          "State": 1,
+          "Timestamp": 8172
+        },
+        {
+          "Name": "initialize/m2n.exchangeVertexDistribution",
+          "State": 0,
+          "Timestamp": 8231
+        },
+        {
+          "Name": "initialize/m2n.requestMasterConnection",
+          "State": 1,
+          "Timestamp": 2
+        },
+        {
+          "Name": "initialize/m2n.requestMasterConnection",
+          "State": 0,
+          "Timestamp": 8021
+        },
+        {
+          "Name": "initialize/m2n.requestSlavesConnection",
+          "State": 1,
+          "Timestamp": 8108
+        },
+        {
+          "Name": "initialize/m2n.requestSlavesConnection",
+          "State": 0,
+          "Timestamp": 8236
+        },
+        {
+          "Name": "initialize/partition.gatherMesh.Dirichlet-Mesh",
+          "State": 1,
+          "Timestamp": 8022
+        },
+        {
+          "Name": "initialize/partition.gatherMesh.Dirichlet-Mesh",
+          "State": 0,
+          "Timestamp": 8022
+        },
+        {
+          "Name": "initialize/partition.prepareMesh.Dirichlet-Mesh",
+          "State": 1,
+          "Timestamp": 8022
+        },
+        {
+          "Name": "initialize/partition.prepareMesh.Dirichlet-Mesh",
+          "State": 0,
+          "Timestamp": 8022
+        },
+        {
+          "Name": "initialize/partition.receiveGlobalMesh.Neumann-Mesh",
+          "State": 1,
+          "Timestamp": 8023
+        },
+        {
+          "Name": "initialize/partition.receiveGlobalMesh.Neumann-Mesh",
+          "State": 0,
+          "Timestamp": 8106
+        },
+        {
+          "Name": "initialize/partition.sendGlobalMesh.Dirichlet-Mesh",
+          "State": 1,
+          "Timestamp": 8022
+        },
+        {
+          "Name": "initialize/partition.sendGlobalMesh.Dirichlet-Mesh",
+          "State": 0,
+          "Timestamp": 8022
+        },
+        {
+          "Name": "solver.advance",
+          "State": 1,
+          "Timestamp": 8238
+        },
+        {
+          "Name": "solver.advance",
+          "State": 0,
+          "Timestamp": 8239
+        },
+        {
+          "Name": "solver.initialize",
+          "State": 1,
+          "Timestamp": 0
+        },
+        {
+          "Name": "solver.initialize",
+          "State": 2,
+          "Timestamp": 1
+        },
+        {
+          "Name": "solver.initialize",
+          "State": 1,
+          "Timestamp": 8237
+        },
+        {
+          "Name": "solver.initialize",
+          "State": 0,
+          "Timestamp": 8237
+        }
+      ],
+      "Timings": {
+        "_GLOBAL": {
+          "Count": 1,
+          "Data": {},
+          "Max": 8287,
+          "Min": 8287,
+          "TimeRatio": 1.0,
+          "Total": 8287
+        },
+        "advance": {
+          "Count": 1,
+          "Data": {},
+          "Max": 1,
+          "Min": 1,
+          "TimeRatio": 0.00012067093037287318,
+          "Total": 1
+        },
+        "advance/m2n.sendData": {
+          "Count": 1,
+          "Data": {},
+          "Max": 0,
+          "Min": 0,
+          "TimeRatio": 0.0,
+          "Total": 0
+        },
+        "advance/map.nn.computeMapping.FromNeumann-MeshToDirichlet-Mesh": {
+          "Count": 1,
+          "Data": {},
+          "Max": 0,
+          "Min": 0,
+          "TimeRatio": 0.0,
+          "Total": 0
+        },
+        "advance/map.nn.computeMapping.FromNeumann-MeshToDirichlet-Mesh.getIndexOnVertices": {
+          "Count": 1,
+          "Data": {},
+          "Max": 0,
+          "Min": 0,
+          "TimeRatio": 0.0,
+          "Total": 0
+        },
+        "advance/map.nn.mapData.FromNeumann-MeshToDirichlet-Mesh": {
+          "Count": 1,
+          "Data": {},
+          "Max": 0,
+          "Min": 0,
+          "TimeRatio": 0.0,
+          "Total": 0
+        },
+        "configure": {
+          "Count": 1,
+          "Data": {},
+          "Max": 0,
+          "Min": 0,
+          "TimeRatio": 0.0,
+          "Total": 0
+        },
+        "finalize": {
+          "Count": 1,
+          "Data": {},
+          "Max": 48,
+          "Min": 48,
+          "TimeRatio": 0.005792204657897913,
+          "Total": 48
+        },
+        "initialize": {
+          "Count": 1,
+          "Data": {},
+          "Max": 8236,
+          "Min": 8236,
+          "TimeRatio": 0.9938457825509834,
+          "Total": 8236
+        },
+        "initialize/m2n.broadcastVertexDistributions": {
+          "Count": 2,
+          "Data": {},
+          "Max": 0,
+          "Min": 0,
+          "TimeRatio": 0.0,
+          "Total": 0
+        },
+        "initialize/m2n.buildCommunicationMap": {
+          "Count": 2,
+          "Data": {},
+          "Max": 0,
+          "Min": 0,
+          "TimeRatio": 0.0,
+          "Total": 0
+        },
+        "initialize/m2n.createCommunications": {
+          "Count": 2,
+          "Data": {
+            "Connections": [
+              1,
+              1
+            ]
+          },
+          "Max": 17,
+          "Min": 4,
+          "TimeRatio": 0.0026547604682032096,
+          "Total": 22
+        },
+        "initialize/m2n.exchangeVertexDistribution": {
+          "Count": 2,
+          "Data": {},
+          "Max": 58,
+          "Min": 46,
+          "TimeRatio": 0.012670447689151683,
+          "Total": 105
+        },
+        "initialize/m2n.requestMasterConnection": {
+          "Count": 1,
+          "Data": {},
+          "Max": 8019,
+          "Min": 8019,
+          "TimeRatio": 0.96766019066007,
+          "Total": 8019
+        },
+        "initialize/m2n.requestSlavesConnection": {
+          "Count": 1,
+          "Data": {},
+          "Max": 127,
+          "Min": 127,
+          "TimeRatio": 0.015325208157354893,
+          "Total": 127
+        },
+        "initialize/partition.gatherMesh.Dirichlet-Mesh": {
+          "Count": 1,
+          "Data": {},
+          "Max": 0,
+          "Min": 0,
+          "TimeRatio": 0.0,
+          "Total": 0
+        },
+        "initialize/partition.prepareMesh.Dirichlet-Mesh": {
+          "Count": 1,
+          "Data": {},
+          "Max": 0,
+          "Min": 0,
+          "TimeRatio": 0.0,
+          "Total": 0
+        },
+        "initialize/partition.receiveGlobalMesh.Neumann-Mesh": {
+          "Count": 1,
+          "Data": {},
+          "Max": 83,
+          "Min": 83,
+          "TimeRatio": 0.010015687220948474,
+          "Total": 83
+        },
+        "initialize/partition.sendGlobalMesh.Dirichlet-Mesh": {
+          "Count": 1,
+          "Data": {},
+          "Max": 0,
+          "Min": 0,
+          "TimeRatio": 0.0,
+          "Total": 0
+        },
+        "solver.advance": {
+          "Count": 1,
+          "Data": {},
+          "Max": 0,
+          "Min": 0,
+          "TimeRatio": 0.0,
+          "Total": 0
+        },
+        "solver.initialize": {
+          "Count": 1,
+          "Data": {},
+          "Max": 1,
+          "Min": 1,
+          "TimeRatio": 0.00012067093037287318,
+          "Total": 1
+        }
+      }
+    }
+  ]
+}

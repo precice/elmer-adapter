@@ -48,7 +48,7 @@
             <participants first="Lower_Plate" second="Upper_Plate"/>
             <exchange data="Temperature_Lower" mesh="Lower_Plate_Mesh" from="Lower_Plate" to="Upper_Plate"/>
             <exchange data="Temperature_Upper" mesh="Lower_Plate_Mesh" from="Upper_Plate" to="Lower_Plate"/>
-            <relative-convergence-measure limit="1.0e-6" data="Temperature_Lower" mesh="Lower_Plate"/>
+            <relative-convergence-measure limit="1.0e-6" data="Temperature_Lower" mesh="Lower_Plate_Mesh"/>
             <extrapolation-order value="0"/>
             <acceleration:IQN-ILS>
                 <data mesh="Lower_Plate_Mesh" name="Temperature_Upper" />

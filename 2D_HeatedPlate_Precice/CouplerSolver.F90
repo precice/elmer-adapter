@@ -93,7 +93,8 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation )
       END IF
       PRINT *,participantName,meshName
     !   CALL precicef_create(participantName, './precice-config.xml', rank, commsize)
-      CALL precicef_create('Lower_Plate', './precice-config.xml', rank, commsize)
+      !CALL precicef_create('Lower_Plate', './precice-config.xml', rank, commsize)
+      !CALL precicef_create('SolverOne', './precice-config_test.xml', rank, commsize)
       ! Allocate dummy mesh with only one vertex 
     !   CALL precicef_get_dims(dimensions)
     !   ALLOCATE(vertex(dimensions))
