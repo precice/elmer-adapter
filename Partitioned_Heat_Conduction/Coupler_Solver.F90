@@ -87,19 +87,16 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation )
 
         time_interval = dble(GetInteger(Simulation,'Timestep intervals',Found))
 
-        CALL precicef_create(participantName, config, rank, commsize)
+        ! CALL precicef_create(participantName, config, rank, commsize)
         
-        itask = 2
-      case(2)
-        
-        writeInitialData(1:50)='                                                  '
-        readItCheckp(1:50)='                                                  '
-        writeItCheckp(1:50)='                                                  '
+        ! writeInitialData(1:50)='                                                  '
+        ! readItCheckp(1:50)='                                                  '
+        ! writeItCheckp(1:50)='                                                  '
 
 
-        CALL precicef_action_write_initial_data(writeInitialData)
-        CALL precicef_action_read_iter_checkp(readItCheckp)
-        CALL precicef_action_write_iter_checkp(writeItCheckp)
+        ! CALL precicef_action_write_initial_data(writeInitialData)
+        ! CALL precicef_action_read_iter_checkp(readItCheckp)
+        ! CALL precicef_action_write_iter_checkp(writeItCheckp)
 
         NULLIFY( BCPerm )    
         ALLOCATE( BCPerm( Mesh % NumberOfNodes ) )
@@ -115,8 +112,6 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation )
         ALLOCATE( CoordVals(3*VertexSize) )
         ALLOCATE(vertexIDs(VertexSize))
 
-
-
         DO i=1,Mesh % NumberOfNodes
             j = BCPerm(i)
             CoordVals(3*j-2) = Mesh % Nodes % x(i)
@@ -127,38 +122,44 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation )
             END IF
         END DO
         CALL Info('CouplerSolver','Created nodes at interface')
-        Print *, meshID
-        CALL precicef_get_dims(dim)
-        CALL precicef_get_mesh_id(meshName, meshID)
-        CALL precicef_set_vertices(meshID, VertexSize, CoordVals, vertexIDs)
+        
+        ! CALL precicef_get_dims(dim)
+        ! CALL precicef_get_mesh_id(meshName, meshID)
+        ! CALL precicef_set_vertices(meshID, VertexSize, CoordVals, vertexIDs)
 
-        CALL precicef_get_data_id("Temperature",meshID,temperatureID)
-        CALL precicef_get_data_id("Flux",meshID,FluxID)
-        ALLOCATE( temperature(VertexSize) )
-        ALLOCATE( flux(VertexSize) )
-        temperature = 0
-        flux = 0
-        CALL precicef_initialize(dt)
-
-        itask = 3
-      case(3)
-        time_step = time_step + dt
-        Print *, time_step
-        temp = time_step + dt
-        ! Print *,temp
-        ! Print *,(temp .eq. time_interval)
-        IF(temp .eq. time_interval) THEN
+        ! CALL precicef_get_data_id("Temperature",meshID,temperatureID)
+        ! CALL precicef_get_data_id("Flux",meshID,FluxID)
+        ! ALLOCATE( temperature(VertexSize) )
+        ! ALLOCATE( flux(VertexSize) )
+        ! temperature = 0
+        ! flux = 0
+        ! CALL precicef_initialize(dt)
+        ! CALL precicef_is_action_required(writeInitialData, bool)
+        ! IF (bool.EQ.1) THEN
+        !   WRITE (*,*) 'DUMMY: Writing initial data'
+        ! ENDIF
+        ! CALL precicef_initialize_data()
+      
+        ! CALL precicef_is_coupling_ongoing(ongoing)
+      !   itask = 2
+      ! case(2)
+      !   time_step = time_step + dt
+      !   Print *, time_step
+      !   temp = time_step + dt
+      !   ! Print *,temp
+      !   ! Print *,(temp .eq. time_interval)
+      !   IF(temp .eq. time_interval) THEN
           
-          itask = 5
-          Print *,itask
-        END IF
+      !     itask = 5
+      !     Print *,itask
+      !   END IF
 
       case(5)
         !
         ! Finalize preCICE, called by nsi_turnof
         !
         print *, "PRECICE finalize"
-        call precicef_finalize()
+        ! call precicef_finalize()
       end select
 
     CALL Info('CouplerSolver',' Ended '//achar(27)//'[0m.')
