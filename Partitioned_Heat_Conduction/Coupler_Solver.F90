@@ -71,8 +71,17 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation )
     select case(itask)
 
     case(1)
-      !-- Create Precice
+      !-- First Time Visit, Create Precice, create nodes at interface
+
+      !---------------Setting Mask & Precice Parameter--------------------
         MaskName = 'Coupler Interface'
+        participantName = GetString( Simulation, 'participantName', Found )
+        meshName = GetString( Simulation, 'meshName', Found )
+        config = GetString( Simulation, 'config', Found )
+        time_interval = dble(GetInteger(Simulation,'Timestep intervals',Found))
+      !--------------------------------------------------------------------
+
+      !---------------Allocate Interface-----------------------------------
         NULLIFY( BCPerm )    
         ALLOCATE( BCPerm( Mesh % NumberOfNodes ) )
         BCPerm = 0
@@ -80,15 +89,18 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation )
         CALL MakePermUsingMask( Model, Solver, Mesh, MaskName, .FALSE., &
               BCPerm, VertexSize)
         
+        Print *, "VertexSize = ", VertexSize      
         CALL Info('CouplerSolver','Number of nodes at interface:'//TRIM(I2S(VertexSize)))
                 
         
         ! ! Also save the coordinates at the interface
         ALLOCATE( CoordVals(3*VertexSize) )
         ALLOCATE(vertexIDs(VertexSize))
+        
 
         DO i=1,Mesh % NumberOfNodes
             j = BCPerm(i)
+            Print *, "node number", i,  j
             CoordVals(3*j-2) = Mesh % Nodes % x(i)
             CoordVals(3*j-1) = Mesh % Nodes % y(i)
             CoordVals(3*j) = Mesh % Nodes % z(i)
@@ -98,17 +110,10 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation )
         END DO
         CALL Info('CouplerSolver','Created nodes at interface')
 
-
+      !--------------------------------------------------------------------
 
         Print *, "PRECICE create"
         time_step = 1
-
-        ! Acquiring participant data
-        participantName = GetString( Simulation, 'participantName', Found )
-        meshName = GetString( Simulation, 'meshName', Found )
-        config = GetString( Simulation, 'config', Found )
-
-        time_interval = dble(GetInteger(Simulation,'Timestep intervals',Found))
 
         IF(participantName .eq. 'dirichlet') THEN
             writeDataName = 'Flux'
@@ -142,10 +147,16 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation )
         CALL precicef_get_data_id(writeDataName,meshID,writeDataID)
         Print *, "readData: ", readDataName, readDataID
         Print *, "writeData:", writeDataName, writeDataID
-        ALLOCATE( temperature(VertexSize) )
-        ALLOCATE( flux(VertexSize) )
-        temperature = 0
-        flux = 0
+
+        ALLOCATE(readData(VertexSize))
+        ALLOCATE(writeData(VertexSize))
+
+        readData = 0
+        writeData = 0
+        ! ALLOCATE( temperature(VertexSize) )
+        ! ALLOCATE( flux(VertexSize) )
+        ! temperature = 0
+        ! flux = 0
 
         CALL precicef_initialize(dt)
         CALL precicef_is_action_required(writeInitialData, bool)
@@ -168,6 +179,7 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation )
         ENDIF
       
         CALL precicef_is_read_data_available(bool)
+        
         IF (bool.EQ.1) THEN
         !   CALL precicef_read_bvdata(readDataID, numberOfVertices, vertexIDs, readData)
           CALL precicef_read_bsdata(readDataID, numberOfVertices, vertexIDs, readData)
