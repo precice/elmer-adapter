@@ -7,7 +7,7 @@
 *.prof
 *.out
 *.so
-*.msh
+
 
 # ignoring specific sif file
 entities.sif
