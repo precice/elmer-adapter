@@ -18,6 +18,10 @@ Simulation
   Timestep Sizes = 1
   Solver Input File = case.sif
   Post File = case.vtu
+
+  participantName = String "Dirichlet"
+  meshName = String "Dirichlet-Mesh"
+  config = String "../precice-config.xml" 
 End
 
 Constants
@@ -65,7 +69,7 @@ End
 
 Solver 2
     Equation = "ImportData"
-    Procedure = "Coupler_Solver" "CouplerSolver"
+    Procedure = "../Coupler_Solver.so" "CouplerSolver"
 
     Exec Solver = before timestep
     

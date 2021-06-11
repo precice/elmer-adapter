@@ -18,6 +18,10 @@ Simulation
   Timestep Sizes = 1
   Solver Input File = case.sif
   Post File = case.vtu
+
+  participantName = String "Neumann"
+  meshName = String "Neumann-Mesh"
+  config = String "../precice-config.xml" 
 End
 
 Constants
@@ -65,10 +69,8 @@ End
 
 Solver 2
     Equation = "ImportData"
-    Procedure = "Coupler_Solver" "CouplerSolver"
-
-    Exec Solver = before timestep
-    
+    Procedure = "../Coupler_Solver.so" "CouplerSolver"
+    Exec Solver = before timestep  
 End
 
 Equation 1

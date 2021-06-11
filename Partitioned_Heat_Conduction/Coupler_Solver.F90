@@ -47,10 +47,12 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation )
     DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: writeData, readData
 
     SAVE Visited,rank,commsize,time_step,time_interval
-    SAVE config, participantName, meshName, MaskName
+    
     SAVE dim,meshID
     SAVE temperature,flux
     SAVE writeItCheckp,readItCheckp
+
+    SAVE config, participantName, meshName, MaskName
     SAVE itask
 
     
@@ -60,6 +62,7 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation )
     Mesh => Solver % Mesh
     Params => GetSolverParams()
 
+    
 
     rank = 0
     commsize = 1
@@ -74,17 +77,21 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation )
         ! Create preCICE
         !
 
-        print *, "PRECICE create"
+        Print *, "PRECICE create"
         time_step = 1
-        participantName = 'Dirichlet'
-        config = '../precice-config.xml'
+
+        ! Acquiring participant data
+        participantName = GetString( Simulation, 'participantName', Found )
+        meshName = GetString( Simulation, 'meshName', Found )
+        config = GetString( Simulation, 'config', Found )
+
         time_interval = dble(GetInteger(Simulation,'Timestep intervals',Found))
 
         CALL precicef_create(participantName, config, rank, commsize)
         
         itask = 2
       case(2)
-        meshName = 'Dirichlet-Mesh'
+        
         writeInitialData(1:50)='                                                  '
         readItCheckp(1:50)='                                                  '
         writeItCheckp(1:50)='                                                  '
@@ -120,7 +127,7 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation )
             END IF
         END DO
         CALL Info('CouplerSolver','Created nodes at interface')
-
+        Print *, meshID
         CALL precicef_get_dims(dim)
         CALL precicef_get_mesh_id(meshName, meshID)
         CALL precicef_set_vertices(meshID, VertexSize, CoordVals, vertexIDs)
