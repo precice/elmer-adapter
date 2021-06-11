@@ -19,6 +19,8 @@
     * To read installed contents of package, type sudo dpkg -L libprecice2_2.2.1_bionic.deb (???, why it says it is not installed)
     * To check installed packages, sudo apt list --installed, you will find libprecice2/now 2.2.1 amd64 [installed,local]
 
+# Important Links
+
 # Notes for next meeting
 
 @ https://github.com/precice/tutorials/tree/develop/partitioned-heat-conduction, within the read me file, the recatangular domain Omega = [0,2] x [0,1] how is that.
