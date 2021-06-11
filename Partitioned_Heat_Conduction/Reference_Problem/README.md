@@ -5,7 +5,7 @@
 * Reference_Problem.msh   : This is the msh file that mesh files for ElmerSolver can be generated from 
 
 # Generating Mesh Files
-It can be done in 2 ways\
+It can be done in 2 ways
 * using ElmerGrid : just type ElmerGrid 14 2 Reference_Problem.msh and the mesh files will be generated in a seperate folder under same name
 * using ElmerGUI  : open the msh file in ElmerGUI, define problem, save the project and generate .sif file, the mesh files will be generated in the location defined
                   in the model/setup under MeshDB parameter. For more information please refer to ElmerGUI Tutorials 
