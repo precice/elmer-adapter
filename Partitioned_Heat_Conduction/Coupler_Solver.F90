@@ -104,7 +104,7 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation )
         NULLIFY( BCPerm )    
         ALLOCATE( BCPerm( Mesh % NumberOfNodes ) )
         BCPerm = 0
-
+        ! ?? I do not understand what BCPerm is doing
         CALL MakePermUsingMask( Model, Solver, Mesh, MaskName, .FALSE., &
               BCPerm, VertexSize)
         
