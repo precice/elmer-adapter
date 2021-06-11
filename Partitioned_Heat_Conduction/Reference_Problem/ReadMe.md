@@ -5,13 +5,15 @@ Reference_Problem.geo   : This is the gmsh file to build gemoerty and generate t
 Reference_Problem.msh   : This is the msh file that mesh files for ElmerSolver can be generated from
 
 # Generating Mesh Files
-It can be done in 2 ways
-using ElmerGrid : just type ElmerGrid 14 2 Reference_Problem.msh and the mesh files will be generated in a seperate folder under same name
+It can be done in 2 ways\
+using ElmerGrid : just type ElmerGrid 14 2 Reference_Problem.msh and the mesh files will be generated in a seperate folder under same name\
 using ElmerGUI  : open the msh file in ElmerGUI, define problem, save the project and generate .sif file, the mesh files will be generated in the location defined
-                  in the model/setup under MeshDB parameter. For more information please refer to ElmerGUI Tutorials 
+                  in the model/setup under MeshDB parameter. For more information please refer to ElmerGUI Tutorials \
                   http://www.nic.funet.fi/pub/sci/physics/elmer/doc/ElmerTutorials.pdf
 
 # Generating .msh File
 These steps are required if the user want to regenerate the existing .msh file, gmsh software is required, open the .geo in gmsh by running command
 gmsh <FileName>.geo and follow the following tutorial https://www.youtube.com/watch?v=O1FyiBBuN98&ab_channel=JoshTheEngineer
+
+# Running Example
 
