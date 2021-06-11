@@ -63,6 +63,7 @@ PROGRAM main
   
     CALL precicef_initialize(dt)
   
+    ! ?? how precice know whether action is required or not,and how it knows if data needs to be initialized
     CALL precicef_is_action_required(writeInitialData, bool)
     IF (bool.EQ.1) THEN
       WRITE (*,*) 'DUMMY: Writing initial data'
