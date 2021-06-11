@@ -70,6 +70,8 @@ End
 Solver 2
     Equation = "ImportData"
     Procedure = "../Coupler_Solver.so" "CouplerSolver"
+    ImportField = String "Flux"
+    ExportField = String "Temperature"
     Exec Solver = before timestep  
 End
 

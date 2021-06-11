@@ -100,7 +100,6 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation )
 
         DO i=1,Mesh % NumberOfNodes
             j = BCPerm(i)
-            Print *, "node number", i,  j
             CoordVals(3*j-2) = Mesh % Nodes % x(i)
             CoordVals(3*j-1) = Mesh % Nodes % y(i)
             CoordVals(3*j) = Mesh % Nodes % z(i)
@@ -114,15 +113,23 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation )
 
         Print *, "PRECICE create"
         time_step = 1
+        ! TODO implement to handle multiple problems, not to be hardcoded
+        readDataName = ListGetString(Params,'ImportField',Found )
 
-        IF(participantName .eq. 'dirichlet') THEN
-            writeDataName = 'Flux'
-            readDataName = 'Temperature'
-          ENDIF
-          IF(participantName .eq. 'neumann') THEN
-            writeDataName = 'Temperature'
-            readDataName = 'Flux'
-          ENDIF
+        IF(.NOT. Found ) THEN
+          CALL Fatal('CouplerSolver', 'No Import Field Specified')
+        END IF
+
+        writeDataName = ListGetString(Params,'ExportField',Found )
+
+        IF(.NOT. Found ) THEN
+          CALL Fatal('CouplerSolver', 'No Export Field Specified')
+        END IF
+
+        Print *, "readDataName  ", readDataName
+        Print *, "writeDataName ", writeDataName
+
+        
 
 
         CALL precicef_create(participantName, config, rank, commsize)
@@ -139,24 +146,17 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation )
         CALL precicef_get_dims(dim)
         CALL precicef_get_mesh_id(meshName, meshID)
         CALL precicef_set_vertices(meshID, VertexSize, CoordVals, vertexIDs)
-        
-        ! CALL precicef_get_data_id("Temperature",meshID,temperatureID)
-        ! CALL precicef_get_data_id("Flux",meshID,FluxID)
 
         CALL precicef_get_data_id(readDataName,meshID,readDataID)
         CALL precicef_get_data_id(writeDataName,meshID,writeDataID)
-        Print *, "readData: ", readDataName, readDataID
-        Print *, "writeData:", writeDataName, writeDataID
+        
 
         ALLOCATE(readData(VertexSize))
         ALLOCATE(writeData(VertexSize))
 
         readData = 0
         writeData = 0
-        ! ALLOCATE( temperature(VertexSize) )
-        ! ALLOCATE( flux(VertexSize) )
-        ! temperature = 0
-        ! flux = 0
+        
 
         CALL precicef_initialize(dt)
         CALL precicef_is_action_required(writeInitialData, bool)
@@ -171,45 +171,45 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation )
         
     case(2)
         !-- time loop
-        CALL precicef_is_action_required(writeItCheckp, bool)
+        ! CALL precicef_is_action_required(writeItCheckp, bool)
       
-        IF (bool.EQ.1) THEN
-          WRITE (*,*) 'DUMMY: Writing iteration checkpoint'
-          CALL precicef_mark_action_fulfilled(writeItCheckp)
-        ENDIF
+        ! IF (bool.EQ.1) THEN
+        !   WRITE (*,*) 'DUMMY: Writing iteration checkpoint'
+        !   CALL precicef_mark_action_fulfilled(writeItCheckp)
+        ! ENDIF
       
-        CALL precicef_is_read_data_available(bool)
+        ! CALL precicef_is_read_data_available(bool)
         
-        IF (bool.EQ.1) THEN
-        !   CALL precicef_read_bvdata(readDataID, numberOfVertices, vertexIDs, readData)
-          CALL precicef_read_bsdata(readDataID, numberOfVertices, vertexIDs, readData)
-        ENDIF
+        ! IF (bool.EQ.1) THEN
+        ! !   CALL precicef_read_bvdata(readDataID, numberOfVertices, vertexIDs, readData)
+        !   CALL precicef_read_bsdata(readDataID, numberOfVertices, vertexIDs, readData)
+        ! ENDIF
       
-        WRITE (*,*) 'readData: ', readData
+        ! WRITE (*,*) 'readData: ', readData
       
-        ! writeData = readData + 1
+        ! ! writeData = readData + 1
       
-        CALL precicef_is_write_data_required(dt, bool)
-        IF (bool.EQ.1) THEN
-        !   CALL precicef_write_bvdata(writeDataID, numberOfVertices, vertexIDs, writeData)
-          CALL precicef_write_bsdata(writeDataID, numberOfVertices, vertexIDs, writeData)
-        ENDIF
+        ! CALL precicef_is_write_data_required(dt, bool)
+        ! IF (bool.EQ.1) THEN
+        ! !   CALL precicef_write_bvdata(writeDataID, numberOfVertices, vertexIDs, writeData)
+        !   CALL precicef_write_bsdata(writeDataID, numberOfVertices, vertexIDs, writeData)
+        ! ENDIF
       
-        CALL precicef_advance(dt)
+        ! CALL precicef_advance(dt)
       
-        CALL precicef_is_action_required(readItCheckp, bool)
-        IF (bool.EQ.1) THEN
-          WRITE (*,*) 'DUMMY: Reading iteration checkpoint'
-          CALL precicef_mark_action_fulfilled(readItCheckp)
-        ELSE
-          WRITE (*,*) 'DUMMY: Advancing in time'
-        ENDIF
+        ! CALL precicef_is_action_required(readItCheckp, bool)
+        ! IF (bool.EQ.1) THEN
+        !   WRITE (*,*) 'DUMMY: Reading iteration checkpoint'
+        !   CALL precicef_mark_action_fulfilled(readItCheckp)
+        ! ELSE
+        !   WRITE (*,*) 'DUMMY: Advancing in time'
+        ! ENDIF
       
-        CALL precicef_is_coupling_ongoing(ongoing)
+        ! CALL precicef_is_coupling_ongoing(ongoing)
 
-        IF(ongoing.EQ.0) THEN
-            itask = 3
-        END IF
+        ! IF(ongoing.EQ.0) THEN
+        !     itask = 3
+        ! END IF
     
     case(3)
         print *, "PRECICE finalize"
