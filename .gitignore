@@ -5,9 +5,14 @@
 *.nodes
 *.names
 *.prof
+
+# ignoring binary files
 *.out
 *.so
 
+# ignoring precice log files
+*.log
+*.json
 
 # ignoring specific sif file
 entities.sif
