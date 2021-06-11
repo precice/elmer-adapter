@@ -1,6 +1,24 @@
 # elmer-adapter
 **experimental** preCICE-adapter for the open source multiphysical simulation software Elmer FEM
 
+# TODO
+* remove personal remind quotes
+* add result image for example problems
+* Complete required software and installation instructions
+
+# Required Software
+* libprecice2_2.2.1(libprecice2_2.2.1_bionic.deb), make sure to install compatible version with operating system, here bionic is used because i have ubuntu 18.04
+
+
+# Installation Instructions
+* preCICE
+    * install debian package(can also compile source code but package is easier)
+    * GO TO https://github.com/precice/precice/releases/tag/v2.2.1 and download libprecice2_2.2.1_bionic.deb, (remind quote, saved in precice software)
+    * GO TO the location of the downloaded debian package,type sudo dpkg -i libprecice2_2.2.1_bionic.deb
+    * To check the contents of the package, type sudo dpkg-deb -c libprecice2_2.2.1_bionic.deb 
+    * To read installed contents of package, type sudo dpkg -L libprecice2_2.2.1_bionic.deb (???, why it says it is not installed)
+    * To check installed packages, sudo apt list --installed, you will find libprecice2/now 2.2.1 amd64 [installed,local]
+
 # Notes for next meeting
 
 @ https://github.com/precice/tutorials/tree/develop/partitioned-heat-conduction, within the read me file, the recatangular domain Omega = [0,2] x [0,1] how is that.
