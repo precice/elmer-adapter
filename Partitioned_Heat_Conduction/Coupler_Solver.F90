@@ -15,12 +15,13 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation )
     !------------------------------------------------------------------------------
     ! Elmer Variables required for data transfer
     TYPE(Mesh_t), POINTER               :: Mesh
+    TYPE(Variable_t), POINTER           :: ImportVar,ExportVar
     TYPE(ValueList_t), POINTER          :: Simulation
     TYPE(ValueList_t), POINTER          :: Params
     CHARACTER(LEN=MAX_NAME_LEN)         :: MaskName
     REAL(KIND=dp), POINTER              :: CoordVals(:)
     INTEGER, POINTER                    :: BCPerm(:)
-    INTEGER                             :: i,j,k,nsize
+    INTEGER                             :: i,j,k,nsize,dofs
     LOGICAL                             :: Found
     LOGICAL                             :: Visited = .FALSE.
 
@@ -129,8 +130,29 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation )
         Print *, "readDataName  ", readDataName
         Print *, "writeDataName ", writeDataName
 
-        
+        ImportVar => VariableGet( Mesh % Variables, readDataName ) 
+        IF(ASSOCIATED( ImportVar ) ) THEN
+          CALL Info('CouplerSolver','Using existing variable: '//TRIM(readDataName))
+        ELSE
+          CALL Info('CouplerSolver','Creating variable as it does not exist: '//TRIM(readDataName))
+          Dofs = ListGetInteger( Params,'Field Dofs',Found )
+          IF(.NOT. Found ) Dofs = 1
+          CALL VariableAddVector( Mesh % Variables, Mesh, Solver, readDataName, DOFs, &
+              Perm = BCPerm, Secondary = .TRUE. )
+          ImportVar => VariableGet( Mesh % Variables, readDataName ) 
+        END IF
 
+        ExportVar => VariableGet( Mesh % Variables, writeDataName ) 
+        IF(ASSOCIATED( ImportVar ) ) THEN
+          CALL Info('CouplerSolver','Using existing variable: '//TRIM(writeDataName))
+        ELSE
+          CALL Info('CouplerSolver','Creating variable as it does not exist: '//TRIM(writeDataName))
+          Dofs = ListGetInteger( Params,'Field Dofs',Found )
+          IF(.NOT. Found ) Dofs = 1
+          CALL VariableAddVector( Mesh % Variables, Mesh, Solver, writeDataName, DOFs, &
+              Perm = BCPerm, Secondary = .TRUE. )
+          ExportVar => VariableGet( Mesh % Variables, writeDataName ) 
+        END IF
 
         CALL precicef_create(participantName, config, rank, commsize)
 
