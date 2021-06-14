@@ -37,19 +37,26 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
     !------------------------Data Arrays----------------------------------------------
     REAL(KIND=dp), POINTER              :: CoordVals(:)
     INTEGER, POINTER                    :: BCPerm(:)
+    !------------------------Time Variable----------------------------------------------
+    TYPE(Variable_t), POINTER :: TimeVar
+    Real(KIND=dp) :: Time
 
     !--------------------------Precice-Variables-------------------------------------
     !-------------------------Strings----------------------------------------------
     CHARACTER(LEN=MAX_NAME_LEN)         :: participantName, meshName, configPath, readDataName,writeDataName
+    CHARACTER(LEN=MAX_NAME_LEN)         :: writeInitialData, readItCheckp, writeItCheckp ! ?? Do not know
     !-------------------------IDs-Integer----------------------------------------------
     INTEGER                         :: meshID,readDataID, writeDataID
     !------------------------Data Arrays----------------------------------------------
-    DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: writeData, readData
+    REAL(KIND=dp), POINTER :: writeData(:), readData(:)
     INTEGER, POINTER                :: vertexIDs(:)
     !------------------------Mesh Data----------------------------------------------
     INTEGER                         :: vertexSize
     INTEGER                         :: Dofs
-
+    INTEGER                         :: dimensions ! ?? Do not know 
+    !----------------------Time Loop Control Variables-----------------------------
+    INTEGER                         :: bool
+    INTEGER                         :: ongoing
     !--------------------------Variables-End-------------------------------------------
 
 
@@ -58,7 +65,9 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
     SAVE meshID,readDataID,writeDataID
     SAVE meshName,readDataName,writeDataName
     SAVE itask
-    SAVE BCPerm,CoordVals
+    SAVE BCPerm,CoordVals,vertexIDs
+    SAVE readData,writeData
+    SAVE vertexSize
 
     !--------------------------SAVE-End-------------------------------------------
 
@@ -93,7 +102,9 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
         NULLIFY( BCPerm )    
         ALLOCATE( BCPerm( Mesh % NumberOfNodes ) )
         BCPerm = 0
-        CALL MakePermUsingMask( Model, Solver, Mesh, MaskName, .FALSE., &
+        ! CALL MakePermUsingMask( Model, Solver, Mesh, MaskName, .FALSE., &
+        !     BCPerm, vertexSize )
+        CALL MakePermUsingMask( Model, Solver, Mesh, MaskName, .TRUE., &
             BCPerm, vertexSize )
         CALL Info('CouplerSolver','Number of nodes at interface:'//TRIM(I2S(vertexSize)))
 
@@ -133,7 +144,9 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
             j = BCPerm(i)
             IF(j == 0) CYCLE
             
-            write(infoMessage,'(A,I5,A,I5,A,F10.2)') 'Node: ',i,' Index: ',j,' Value: ',readDataVariable % Values(i) 
+            write(infoMessage,'(A,I5,A,I5,A,F10.2,A,I5)') 'Node: ',i,' Index: ',j,' Value: ', &
+                        readDataVariable % Values(readDataVariable % Perm(i)), &
+                        ' VertexID: ', vertexIDs(j) 
             CALL Info('CouplerSolver',infoMessage)
             
         END DO
@@ -155,30 +168,91 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
 
         !-----------Print Write Values, For Debugging Purposes--------------------
         writeDataVariable  => VariableGet( mesh % Variables, writeDataName)
+        writeDataVariable % Values = 7
         CALL Info('CouplerSolver','Printing write Data')
         DO i = 1, mesh % NumberOfNodes
             j = BCPerm(i)
             IF(j == 0) CYCLE
             
-            write(infoMessage,'(A,I5,A,I5,A,F10.2)') 'Node: ',i,' Index: ',j,' Value: ',writeDataVariable % Values(i)
+            write(infoMessage,'(A,I5,A,I5,A,F10.2)') 'Node: ',i,' Index: ',j,' Value: ', &
+                                writeDataVariable % Values(writeDataVariable % Perm(i))
             CALL Info('CouplerSolver',infoMessage)
         END DO
 
         !------------------------------------------------------------------------------
+
+        !---------------Initializing Precice------------------------------------------
+        CALL precicef_create(participantName, configPath, rank, commsize)
+
+        writeInitialData(1:50)='                                                  '
+        readItCheckp(1:50)='                                                  '
+        writeItCheckp(1:50)='                                                  '
+
+        CALL precicef_get_dims(dimensions)
+        CALL precicef_get_mesh_id(meshName, meshID)
+        CALL precicef_set_vertices(meshID, vertexSize, CoordVals, vertexIDs)
+
+        CALL precicef_get_data_id(readDataName,meshID,readDataID)
+        CALL precicef_get_data_id(writeDataName,meshID,writeDataID)
+
+        ALLOCATE(readData(VertexSize))
+        ALLOCATE(writeData(VertexSize))
+
+        readData = 0
+        writeData = 0
+
+        CALL precicef_initialize(dt)
+        CALL precicef_is_action_required(writeInitialData, bool)
+
+        IF (bool.EQ.1) THEN
+            CALL Info('CouplerSolver','Writing Initial Data')
+        ENDIF
+
+        CALL precicef_initialize_data()
+      
+        CALL precicef_is_coupling_ongoing(ongoing)
+
         itask = 2
 
     case(2)
+
+
+        CALL precicef_is_action_required(writeItCheckp, bool)
+
+        IF (bool.EQ.1) THEN
+          CALL Info('CouplerSolver','Writing iteration checkpoint')
+          CALL precicef_mark_action_fulfilled(writeItCheckp)
+        ENDIF
+
+
+
+        
         readDataVariable  => VariableGet( mesh % Variables, readDataName)
         CALL Info('CouplerSolver','Printing read Data')
+        ! DO i = 1, mesh % NumberOfNodes
+        !     j = BCPerm(i)
+        !     IF(j == 0) CYCLE
+        !     write(infoMessage,'(A,I5,A,I5,A,F10.2,A,F10.2,A,F10.2,A,I5)') 'Node: ',i,' Index: ',j,' Value: ' &
+        !                     ,readDataVariable % Values(readDataVariable % Perm(i)),&
+        !                     ' X= ', CoordVals(3*j-2), ' Y= ', CoordVals(3*j-1), &
+        !                     ' VertexID: ', vertexIDs(j)
+        !     CALL Info('CouplerSolver',infoMessage)
+        ! END DO
+        CALL precicef_read_bsdata(readDataID, vertexSize, vertexIDs, readData)    
         DO i = 1, mesh % NumberOfNodes
             j = BCPerm(i)
             IF(j == 0) CYCLE
-            
-            write(infoMessage,'(A,I5,A,I5,A,F10.2,A,F10.2,A,F10.2)') 'Node: ',i,' Index: ',j,' Value: ' &
-                            ,readDataVariable % Values(readDataVariable % Perm(i)),&
-                            ' X= ', CoordVals(3*j-2), ' Y= ', CoordVals(3*j-1)
+            write(infoMessage,'(A,I5,A,I5,A,F10.2,A,F10.2,A,F10.2,A,I5)') 'Node: ',i,' Index: ',j,' Value: ' &
+                            ,readData(j),&
+                            ' X= ', CoordVals(3*j-2), ' Y= ', CoordVals(3*j-1), &
+                            ' VertexID: ', vertexIDs(j)
             CALL Info('CouplerSolver',infoMessage)
-        END DO
+
+        END DO    
+
+        TimeVar => VariableGet( Solver % Mesh % Variables, 'Time' )
+        Time = TimeVar % Values(1)
+
 
         writeDataVariable  => VariableGet( mesh % Variables, writeDataName)
         CALL Info('CouplerSolver','Printing write Data')
@@ -190,7 +264,23 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
                     writeDataVariable % Values(writeDataVariable % Perm(i)), &
                     ' X= ', CoordVals(3*j-2), ' Y= ', CoordVals(3*j-1)
             CALL Info('CouplerSolver',infoMessage)
+            writeData(j) = writeDataVariable % Values(writeDataVariable % Perm(i)) * Time
         END DO
+
+        CALL precicef_write_bsdata(writeDataID, vertexSize, vertexIDs, writeData)
+
+        CALL precicef_advance(dt)
+        CALL precicef_is_coupling_ongoing(ongoing)
+
+
+
+        IF(ongoing.EQ.0) THEN
+            CALL Info('CouplerSolver','Precice Finalize')
+            CALL precicef_finalize()
+
+        END IF
+        
+        
     end select
 
     CALL Info('CouplerSolver',' Ended '//achar(27)//'[0m.')

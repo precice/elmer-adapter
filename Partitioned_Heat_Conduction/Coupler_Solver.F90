@@ -29,25 +29,25 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation )
     ! Precice variables for using Precice API
     
     CHARACTER*50                    :: writeInitialData, readItCheckp, writeItCheckp
-    CHARACTER*50                    :: readDataName, writeDataName
-    CHARACTER*50                    :: printMessage
+    CHARACTER*50                    :: readDataName, writeDataName!Done
+    CHARACTER*50                    :: printMessage!Done
     INTEGER                         :: ongoing,   vertexID, bool,numberOfVertices
-    INTEGER                         :: itask = 1
+    INTEGER                         :: itask = 1!Done
     REAL(KIND=dp)                   :: dtlimit, timeStep,interval,temp
     INTEGER                         :: timeInterval
     REAL, DIMENSION(:), ALLOCATABLE :: vertex  
 
     !------------------------------------------------------------------------------
-    CHARACTER*512                   :: config
-    CHARACTER*50                    :: participantName, meshName
-    INTEGER                         :: rank,commsize,dim,meshID,VertexSize
-    INTEGER                         :: temperatureID,fluxID
+    CHARACTER*512                   :: config!DONE
+    CHARACTER*50                    :: participantName, meshName!Done
+    INTEGER                         :: rank,commsize,dim,meshID,VertexSize!Done
+    INTEGER                         :: temperatureID,fluxID!Done, here repeated
     REAL(KIND=dp)                   :: precice_dt,time_step,time_interval
-    INTEGER, POINTER                :: vertexIDs(:)
-    REAL(KIND=dp), POINTER          :: temperature(:), flux(:)
-    DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: writeData, readData
+    INTEGER, POINTER                :: vertexIDs(:)!Done
+    REAL(KIND=dp), POINTER          :: temperature(:), flux(:)!Done
+    DOUBLE PRECISION, DIMENSION(:), ALLOCATABLE :: writeData, readData!Done
 
-    INTEGER                         :: readDataID, writeDataID
+    INTEGER                         :: readDataID, writeDataID!Done
 
     SAVE Visited,rank,commsize,time_step,time_interval
     
