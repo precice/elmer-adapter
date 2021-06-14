@@ -73,7 +73,7 @@ Solver 2
     Procedure = "../Coupler_Solver_New.so" "CouplerSolver"
     readDataName = String "Flux"
     writeDataName = String "Temperature"
-    Exec Solver = before timestep  
+    Exec Solver = before all,before timestep 
 End
 
 Equation 1
