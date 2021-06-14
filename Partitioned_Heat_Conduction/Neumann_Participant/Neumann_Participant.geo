@@ -36,3 +36,5 @@ Transfinite Line {5, 3} = 11 Using Progression 1;
 Transfinite Line {2, 4} = 11 Using Progression 1;
 //+
 Recombine Surface {1};
+//+
+Recombine Surface {1};
