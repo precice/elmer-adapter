@@ -95,8 +95,7 @@ End
 Boundary Condition 1
   Target Boundaries(1) = 1 
   Name = "Neumann_Coupling"
-  Temperature = Variable Coordinate
-        Real MATC "1 + (tx(0)^2) + (2 * (tx(1) ^ 2))"
+
   Coupler Interface = Logical True
 End
 

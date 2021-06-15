@@ -103,7 +103,5 @@ End
 Boundary Condition 2
   Target Boundaries(1) = 2 
   Name = "Dirichlet_Coupling"
-  Temperature = Variable Coordinate
-        Real MATC "1 + (tx(0) ^ 2) + (2 * (tx(1) ^ 2))"
   Coupler Interface = Logical True
 End

@@ -10,9 +10,6 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
     LOGICAL :: TransientSimulation
 
 
-
-
-    
     !--------------------------Variables-Start-------------------------------------------
     
     !--------------------------MPI-Variables-------------------------------------
@@ -152,7 +149,7 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
         END DO
         !------------------------------------------------------------------------------
        
-       !-----------Identify write Variables and Create it if it does not exist--------------------
+        !-----------Identify write Variables and Create it if it does not exist--------------------
         writeDataName =  ListGetString(solverParams,'writeDataName',Found )
         writeDataVariable  => VariableGet( mesh % Variables, writeDataName)
         IF(ASSOCIATED( writeDataVariable ) ) THEN
@@ -164,11 +161,12 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
             CALL VariableAddVector( mesh % Variables, mesh, Solver, writeDataName, Dofs, &
                 Perm = BCPerm, Secondary = .TRUE. )
             writeDataVariable => VariableGet( mesh % Variables, writeDataName )
+            
         END IF 
 
         !-----------Print Write Values, For Debugging Purposes--------------------
         writeDataVariable  => VariableGet( mesh % Variables, writeDataName)
-        writeDataVariable % Values = 7
+        ! writeDataVariable % Values = 7
         CALL Info('CouplerSolver','Printing write Data')
         DO i = 1, mesh % NumberOfNodes
             j = BCPerm(i)
@@ -225,23 +223,15 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
         ENDIF
 
 
+        !--------------------Reading read Data to preCICE---------------------------
+        CALL precicef_read_bsdata(readDataID, vertexSize, vertexIDs, readData)    
 
-        
         readDataVariable  => VariableGet( mesh % Variables, readDataName)
         CALL Info('CouplerSolver','Printing read Data')
-        ! DO i = 1, mesh % NumberOfNodes
-        !     j = BCPerm(i)
-        !     IF(j == 0) CYCLE
-        !     write(infoMessage,'(A,I5,A,I5,A,F10.2,A,F10.2,A,F10.2,A,I5)') 'Node: ',i,' Index: ',j,' Value: ' &
-        !                     ,readDataVariable % Values(readDataVariable % Perm(i)),&
-        !                     ' X= ', CoordVals(3*j-2), ' Y= ', CoordVals(3*j-1), &
-        !                     ' VertexID: ', vertexIDs(j)
-        !     CALL Info('CouplerSolver',infoMessage)
-        ! END DO
-        CALL precicef_read_bsdata(readDataID, vertexSize, vertexIDs, readData)    
         DO i = 1, mesh % NumberOfNodes
             j = BCPerm(i)
             IF(j == 0) CYCLE
+            readDataVariable % Values(readDataVariable % Perm(i)) = readData(j)
             write(infoMessage,'(A,I5,A,I5,A,F10.2,A,F10.2,A,F10.2,A,I5)') 'Node: ',i,' Index: ',j,' Value: ' &
                             ,readData(j),&
                             ' X= ', CoordVals(3*j-2), ' Y= ', CoordVals(3*j-1), &
@@ -253,27 +243,30 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
         TimeVar => VariableGet( Solver % Mesh % Variables, 'Time' )
         Time = TimeVar % Values(1)
 
-
+        !-------------------Copy Write values from Variable to buffer---------------------
         writeDataVariable  => VariableGet( mesh % Variables, writeDataName)
         CALL Info('CouplerSolver','Printing write Data')
         DO i = 1, mesh % NumberOfNodes
             j = BCPerm(i)
             IF(j == 0) CYCLE
-            
+            writeData(j) = writeDataVariable % Values(writeDataVariable % Perm(i)) 
             write(infoMessage,'(A,I5,A,I5,A,F10.2,A,F10.2,A,F10.2)') 'Node: ',i,' Index: ',j,' Value: ',&
-                    writeDataVariable % Values(writeDataVariable % Perm(i)), &
+                        writeData(j), &
                     ' X= ', CoordVals(3*j-2), ' Y= ', CoordVals(3*j-1)
             CALL Info('CouplerSolver',infoMessage)
-            writeData(j) = writeDataVariable % Values(writeDataVariable % Perm(i)) * Time
+            
         END DO
 
+        !--------------------Writing write Data to preCICE---------------------------
         CALL precicef_write_bsdata(writeDataID, vertexSize, vertexIDs, writeData)
 
+
+        !--------------------Advance time loop---------------------------------------
         CALL precicef_advance(dt)
         CALL precicef_is_coupling_ongoing(ongoing)
 
 
-
+        !-------------------IF Simulation Finished,Finalize--------------------------
         IF(ongoing.EQ.0) THEN
             CALL Info('CouplerSolver','Precice Finalize')
             CALL precicef_finalize()
