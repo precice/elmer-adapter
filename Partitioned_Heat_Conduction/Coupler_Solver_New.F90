@@ -82,7 +82,7 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
 
 
     select case(itask)
-
+        ! TODO make enum
     case(1)
         !-- First Time Visit, Create Precice, create nodes at interface
 
@@ -141,9 +141,9 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
             j = BCPerm(i)
             IF(j == 0) CYCLE
             
-            write(infoMessage,'(A,I5,A,I5,A,F10.2,A,I5)') 'Node: ',i,' Index: ',j,' Value: ', &
+            write(infoMessage,'(A,I5,A,I5,A,F10.4,A,F10.2,A,F10.2)') 'Node: ',i,' Index: ',j,' Value: ', &
                         readDataVariable % Values(readDataVariable % Perm(i)), &
-                        ' VertexID: ', vertexIDs(j) 
+                        ' X= ', CoordVals(3*j-2), ' Y= ', CoordVals(3*j-1)   
             CALL Info('CouplerSolver',infoMessage)
             
         END DO
@@ -172,8 +172,9 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
             j = BCPerm(i)
             IF(j == 0) CYCLE
             
-            write(infoMessage,'(A,I5,A,I5,A,F10.2)') 'Node: ',i,' Index: ',j,' Value: ', &
-                                writeDataVariable % Values(writeDataVariable % Perm(i))
+            write(infoMessage,'(A,I5,A,I5,A,F10.4,A,F10.2,A,F10.2)') 'Node: ',i,' Index: ',j,' Value: ', &
+                                writeDataVariable % Values(writeDataVariable % Perm(i)), &
+                                ' X= ', CoordVals(3*j-2), ' Y= ', CoordVals(3*j-1)   
             CALL Info('CouplerSolver',infoMessage)
         END DO
 
@@ -232,16 +233,15 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
             j = BCPerm(i)
             IF(j == 0) CYCLE
             readDataVariable % Values(readDataVariable % Perm(i)) = readData(j)
-            write(infoMessage,'(A,I5,A,I5,A,F10.2,A,F10.2,A,F10.2,A,I5)') 'Node: ',i,' Index: ',j,' Value: ' &
-                            ,readData(j),&
-                            ' X= ', CoordVals(3*j-2), ' Y= ', CoordVals(3*j-1), &
-                            ' VertexID: ', vertexIDs(j)
+            write(infoMessage,'(A,I5,A,I5,A,F10.4,A,F10.2,A,F10.2)') 'Node: ',i,' Index: ',j,' Value: ' &
+                            ,readDataVariable % Values(readDataVariable % Perm(i)),&
+                            ' X= ', CoordVals(3*j-2), ' Y= ', CoordVals(3*j-1)                                
             CALL Info('CouplerSolver',infoMessage)
 
-        END DO    
+        END DO            
 
-        TimeVar => VariableGet( Solver % Mesh % Variables, 'Time' )
-        Time = TimeVar % Values(1)
+        ! TimeVar => VariableGet( Solver % Mesh % Variables, 'Time' )
+        ! Time = TimeVar % Values(1)
 
         !-------------------Copy Write values from Variable to buffer---------------------
         writeDataVariable  => VariableGet( mesh % Variables, writeDataName)
@@ -250,8 +250,8 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
             j = BCPerm(i)
             IF(j == 0) CYCLE
             writeData(j) = writeDataVariable % Values(writeDataVariable % Perm(i)) 
-            write(infoMessage,'(A,I5,A,I5,A,F10.2,A,F10.2,A,F10.2)') 'Node: ',i,' Index: ',j,' Value: ',&
-                        writeData(j), &
+            write(infoMessage,'(A,I5,A,I5,A,F10.4,A,F10.2,A,F10.2)') 'Node: ',i,' Index: ',j,' Value: ',&
+                    writeDataVariable % Values(writeDataVariable % Perm(i)), &
                     ' X= ', CoordVals(3*j-2), ' Y= ', CoordVals(3*j-1)
             CALL Info('CouplerSolver',infoMessage)
             
@@ -270,8 +270,8 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
         IF(ongoing.EQ.0) THEN
             CALL Info('CouplerSolver','Precice Finalize')
             CALL precicef_finalize()
-
         END IF
+        
         
         
     end select

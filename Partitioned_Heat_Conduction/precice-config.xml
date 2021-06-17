@@ -9,22 +9,22 @@
   <solver-interface dimensions="2">
 
     <data:scalar name="temperature"/>
-    <data:scalar name="flux"/>
+    <data:scalar name="temperature loads"/>
 
     <mesh name="dirichlet-mesh">
       <use-data name="temperature"/>
-      <use-data name="flux"/>
+      <use-data name="temperature loads"/>
     </mesh>
 
     <mesh name="neumann-mesh">
       <use-data name="temperature"/>
-      <use-data name="flux"/>
+      <use-data name="temperature loads"/>
     </mesh>
 
     <participant name="dirichlet">
       <use-mesh name="dirichlet-mesh" provide="yes"/>
       <use-mesh name="neumann-mesh" from="neumann"/>
-      <write-data name="flux" mesh="dirichlet-mesh"/>
+      <write-data name="temperature loads" mesh="dirichlet-mesh"/>
       <read-data name="temperature" mesh="dirichlet-mesh"/>
       <mapping:nearest-neighbor
         direction="read"
@@ -38,7 +38,7 @@
       <use-mesh name="neumann-mesh" provide="yes"/>
       <use-mesh name="dirichlet-mesh" from="dirichlet"/>
       <write-data name="temperature" mesh="neumann-mesh"/>
-      <read-data name="flux" mesh="neumann-mesh"/>
+      <read-data name="temperature loads" mesh="neumann-mesh"/>
       <mapping:nearest-neighbor
         direction="read"
         from="dirichlet-mesh"
@@ -56,7 +56,7 @@
       <!-- <max-time-windows value="3"/> -->
       <!-- <time-window-size value="1" valid-digits="10" method="fixed"/> -->
       <time-window-size value="1"/>
-      <exchange data="flux" mesh="dirichlet-mesh" from="dirichlet" to="neumann" />
+      <exchange data="temperature loads" mesh="dirichlet-mesh" from="dirichlet" to="neumann" />
       <exchange data="temperature" mesh="neumann-mesh" from="neumann" to="dirichlet" />
     </coupling-scheme:serial-explicit>
     <!-- <coupling-scheme:serial-implicit>

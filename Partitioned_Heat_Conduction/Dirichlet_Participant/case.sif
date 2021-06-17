@@ -39,11 +39,13 @@ Body 1
   Equation = 1
   Material = 1
   Body Force = 1
+
 End
 
 Solver 1
   Equation = Heat Equation
   Procedure = "HeatSolve" "HeatSolver"
+  Calculate Loads = True
   Variable = Temperature
   Exec Solver = Always
   Stabilize = True
@@ -72,9 +74,8 @@ Solver 2
     Equation = "ImportData"
     Procedure = "../Coupler_Solver_New.so" "CouplerSolver"
     readDataName = String "Temperature"
-    writeDataName = String "Flux"
+    writeDataName = String "temperature loads"
     Exec Solver = before all,before timestep 
-    
 End
 
 Equation 1
@@ -92,6 +93,7 @@ Body Force 1
   Name = "BodyForce 1"
   Heat Source = -6
 End
+
 
 Boundary Condition 1
   Target Boundaries(1) = 3 
