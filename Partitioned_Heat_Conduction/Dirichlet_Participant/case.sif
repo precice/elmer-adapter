@@ -14,7 +14,7 @@ Simulation
   Output Intervals = 1
   Timestepping Method = BDF
   BDF Order = 5
-  Timestep intervals = 10
+  Timestep intervals = 3
   Timestep Sizes = 1
   Solver Input File = case.sif
   Post File = case.vtu
@@ -71,16 +71,40 @@ Solver 1
 End
 
 Solver 2
-    Equation = "ImportData"
+    Equation = "Initialize"
     Procedure = "../Coupler_Solver_New.so" "CouplerSolver"
     readDataName = String "Temperature"
     writeDataName = String "temperature loads"
-    Exec Solver = before all,before timestep 
+    Exec Solver = before all
+End
+
+Solver 3
+    Equation = "ReadData"
+    Procedure = "../Coupler_Solver_New.so" "CouplerSolver"
+    readDataName = String "Temperature"
+    writeDataName = String "temperature loads"
+    Exec Solver = before timestep
+End
+
+Solver 4
+    Equation = "writeDataAdvance"
+    Procedure = "../Coupler_Solver_New.so" "CouplerSolver"
+    readDataName = String "Temperature"
+    writeDataName = String "temperature loads"
+    Exec Solver = after timestep
+End
+
+Solver 5
+    Equation = "Finalize"
+    Procedure = "../Coupler_Solver_New.so" "CouplerSolver"
+    readDataName = String "Temperature"
+    writeDataName = String "temperature loads"
+    Exec Solver = after all
 End
 
 Equation 1
   Name = "Heat_Plate"
-  Active Solvers(2) = 1 2
+  Active Solvers(1) = 1 
 End
 
 Material 1
@@ -105,5 +129,6 @@ End
 Boundary Condition 2
   Target Boundaries(1) = 2 
   Name = "Dirichlet_Coupling"
+  Temperature = Equals "Temperature"
   Coupler Interface = Logical True
 End

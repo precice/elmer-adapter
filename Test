@@ -7,7 +7,13 @@ Solver 2
 End
 
 
-
+Solver 1
+    Equation = "ImportData"
+    Procedure = "../Coupler_Solver_New.so" "CouplerSolver"
+    readDataName = String "Temperature"
+    writeDataName = String "temperature loads"
+    Exec Solver = before all,before timestep 
+End
  !already initialized
     !------------------------------------------------------------------------------
     ! Precice initialization, only done once

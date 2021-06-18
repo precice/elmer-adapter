@@ -52,7 +52,7 @@
 
     <coupling-scheme:serial-explicit>
       <participants first="dirichlet" second="neumann"/>
-      <max-time value="10.0"/>
+      <max-time value="3.0"/>
       <!-- <max-time-windows value="3"/> -->
       <!-- <time-window-size value="1" valid-digits="10" method="fixed"/> -->
       <time-window-size value="1"/>

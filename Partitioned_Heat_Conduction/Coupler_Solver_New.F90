@@ -80,12 +80,12 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
     commsize = 1
     !--------------------------Initialize-End-------------------------------------------
 
-
+    
     select case(itask)
         ! TODO make enum
     case(1)
         !-- First Time Visit, Create Precice, create nodes at interface
-
+        !----------------------------- Initialize---------------------
         !----------------Acquire Names for solver---------------------
         maskName = GetString( Simulation, 'maskName', Found )
         participantName = GetString( Simulation, 'participantName', Found )
@@ -214,6 +214,58 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
         itask = 2
 
     case(2)
+        !--------------------Reading read Data to preCICE---------------------------
+        CALL precicef_read_bsdata(readDataID, vertexSize, vertexIDs, readData)  
+        
+        readDataVariable  => VariableGet( mesh % Variables, readDataName)
+        CALL Info('CouplerSolver','Printing read Data')
+        DO i = 1, mesh % NumberOfNodes
+            j = BCPerm(i)
+            IF(j == 0) CYCLE
+            readDataVariable % Values(readDataVariable % Perm(i)) = readData(j)
+            write(infoMessage,'(A,I5,A,I5,A,F10.4,A,F10.2,A,F10.2)') 'Node: ',i,' Index: ',j,' Value: ' &
+                            ,readDataVariable % Values(readDataVariable % Perm(i)),&
+                            ' X= ', CoordVals(3*j-2), ' Y= ', CoordVals(3*j-1)                                
+            CALL Info('CouplerSolver',infoMessage)
+
+        END DO 
+
+        itask = 3
+    case(3)
+        !-------------------Copy Write values from Variable to buffer---------------------
+        writeDataVariable  => VariableGet( mesh % Variables, writeDataName)
+        CALL Info('CouplerSolver','Printing write Data')
+        DO i = 1, mesh % NumberOfNodes
+            j = BCPerm(i)
+            IF(j == 0) CYCLE
+            writeData(j) = writeDataVariable % Values(writeDataVariable % Perm(i)) 
+            write(infoMessage,'(A,I5,A,I5,A,F10.4,A,F10.2,A,F10.2)') 'Node: ',i,' Index: ',j,' Value: ',&
+                    writeDataVariable % Values(writeDataVariable % Perm(i)), &
+                    ' X= ', CoordVals(3*j-2), ' Y= ', CoordVals(3*j-1)
+            CALL Info('CouplerSolver',infoMessage)
+            
+        END DO
+
+        !--------------------Writing write Data to preCICE---------------------------
+        CALL precicef_write_bsdata(writeDataID, vertexSize, vertexIDs, writeData)
+
+
+        !--------------------Advance time loop---------------------------------------
+        CALL precicef_advance(dt)
+        CALL precicef_is_coupling_ongoing(ongoing)
+
+        IF(ongoing.EQ.0) THEN
+            itask = 4
+        ELSE
+            itask = 2
+        END IF
+
+    case(4)
+        !----------------------------------------Finailize--------------------------------------
+        CALL Info('CouplerSolver','Precice Finalize')
+        CALL precicef_finalize()    
+
+    case(7)
 
 
         CALL precicef_is_action_required(writeItCheckp, bool)
@@ -273,7 +325,63 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
         END IF
         
         
+    case(8)
+
+        maskName = GetString( Simulation, 'maskName', Found )
+
+        NULLIFY( BCPerm )    
+        ALLOCATE( BCPerm( Mesh % NumberOfNodes ) )
+        BCPerm = 0
+        ! CALL MakePermUsingMask( Model, Solver, Mesh, MaskName, .FALSE., &
+        !     BCPerm, vertexSize )
+        CALL MakePermUsingMask( Model, Solver, Mesh, MaskName, .TRUE., &
+            BCPerm, vertexSize )
         
+        readDataName =  ListGetString(solverParams,'readDataName',Found )
+        readDataVariable  => VariableGet( mesh % Variables, readDataName)
+
+        writeDataName =  ListGetString(solverParams,'writeDataName',Found )
+        writeDataVariable  => VariableGet( mesh % Variables, writeDataName)
+        
+        ALLOCATE( CoordVals(3*vertexSize) )
+        DO i=1,Mesh % NumberOfNodes
+            j = BCPerm(i)
+            CoordVals(3*j-2) = mesh % Nodes % x(i)
+            CoordVals(3*j-1) = mesh % Nodes % y(i)
+            CoordVals(3*j) = mesh % Nodes % z(i)
+            ! readDataVariable % Values(readDataVariable % Perm(i)) = j
+        END DO
+        itask = 4
+        
+    case(9)
+        CALL Info('CouplerSolver','Printing read Data')
+        readDataVariable  => VariableGet( mesh % Variables, readDataName)
+        DO i = 1, mesh % NumberOfNodes
+            j = BCPerm(i)
+            IF(j == 0) CYCLE
+            readDataVariable % Values(readDataVariable % Perm(i)) = 1 + ( (CoordVals(3*j-2)) * (CoordVals(3*j-2)) ) &
+                                   + 2 * ( (CoordVals(3*j-1)) * (CoordVals(3*j-1)) )
+            write(infoMessage,'(A,I5,A,I5,A,F10.4,A,F10.2,A,F10.2)') 'Node: ',i,' Index: ',j,' Value: ', &
+                        readDataVariable % Values(readDataVariable % Perm(i)), &
+                        ' X= ', CoordVals(3*j-2), ' Y= ', CoordVals(3*j-1)   
+            CALL Info('CouplerSolver',infoMessage)
+            
+        END DO
+
+        writeDataVariable  => VariableGet( mesh % Variables, writeDataName)
+        ! writeDataVariable % Values = 7
+        CALL Info('CouplerSolver','Printing write Data')
+        DO i = 1, mesh % NumberOfNodes
+            j = BCPerm(i)
+            IF(j == 0) CYCLE
+            
+            write(infoMessage,'(A,I5,A,I5,A,F10.4,A,F10.2,A,F10.2)') 'Node: ',i,' Index: ',j,' Value: ', &
+                                writeDataVariable % Values(writeDataVariable % Perm(i)), &
+                                ' X= ', CoordVals(3*j-2), ' Y= ', CoordVals(3*j-1)   
+            CALL Info('CouplerSolver',infoMessage)
+        END DO
+
+    
     end select
 
     CALL Info('CouplerSolver',' Ended '//achar(27)//'[0m.')
