@@ -15,7 +15,7 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
     !--------------------------MPI-Variables-------------------------------------
     INTEGER                         :: rank,commsize
     !--------------------------Precice-Control-------------------------------------
-    INTEGER                         :: itask = 1
+    INTEGER                         :: itask = 10
 
     !--------------------------Logic-Control-------------------------------------
     LOGICAL                             :: Found
@@ -56,6 +56,7 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
     INTEGER                         :: ongoing
     !--------------------------Variables-End-------------------------------------------
 
+    integer, dimension (11) :: vertecies
 
 
     !--------------------------SAVE-Start-------------------------------------------
@@ -79,8 +80,12 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
     rank = 0
     commsize = 1
     !--------------------------Initialize-End-------------------------------------------
+    vertecies = (/14, 70,89,108,127,146,165,184,203,222,42/)
 
-    
+    !-- Trusted VertexID for testing
+    ! vertecies = (/1, 60,59,58,57,56,55,54,53,52,3/)
+
+
     select case(itask)
         ! TODO make enum
     case(1)
@@ -351,7 +356,7 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
             CoordVals(3*j) = mesh % Nodes % z(i)
             ! readDataVariable % Values(readDataVariable % Perm(i)) = j
         END DO
-        itask = 4
+        itask = 10
         
     case(9)
         CALL Info('CouplerSolver','Printing read Data')
@@ -380,8 +385,36 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
                                 ' X= ', CoordVals(3*j-2), ' Y= ', CoordVals(3*j-1)   
             CALL Info('CouplerSolver',infoMessage)
         END DO
+    case(10)
+        ALLOCATE( CoordVals(3*11) )  
+        DO i=1,11
+            
+            
+            CoordVals(3*i-2) = mesh % Nodes % x(vertecies(i))
+            CoordVals(3*i-1) = mesh % Nodes % y(vertecies(i))
+            CoordVals(3*i) = mesh % Nodes % z(vertecies(i))
+            ! readDataVariable % Values(readDataVariable % Perm(i)) = j
+        END DO
+        itask = 11
+    case(11)    
+        readDataVariable  => VariableGet( mesh % Variables, "Temperature")
+        writeDataVariable => VariableGet( mesh % Variables, "temperature loads")
 
-    
+        CALL Info('CouplerSolver',"Temperature")
+        DO i = 1, 11
+            write(infoMessage,'(A,I5,A,F10.4,A,F10.2,A,F10.2)') 'Node: ',vertecies(i),' Value: ', &
+                                readDataVariable % Values(readDataVariable % Perm(vertecies(i))), &
+                                ' X= ', CoordVals(3*i-2), ' Y= ', CoordVals(3*i-1)   
+            CALL Info('CouplerSolver',infoMessage)
+        END DO
+
+        CALL Info('CouplerSolver',"temperature loads")
+        DO i = 1, 11
+            write(infoMessage,'(A,I5,A,F10.4,A,F10.2,A,F10.2)') 'Node: ',vertecies(i),' Value: ', &
+                                 writeDataVariable % Values(readDataVariable % Perm(vertecies(i))), &
+                                ' X= ', CoordVals(3*i-2), ' Y= ', CoordVals(3*i-1)   
+            CALL Info('CouplerSolver',infoMessage)
+        END DO
     end select
 
     CALL Info('CouplerSolver',' Ended '//achar(27)//'[0m.')
