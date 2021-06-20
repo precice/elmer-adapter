@@ -14,7 +14,7 @@ Simulation
   Output Intervals = 1
   Timestepping Method = BDF
   BDF Order = 5
-  Timestep intervals = 10
+  Timestep intervals = 5
   Timestep Sizes = 1
   Solver Input File = case.sif
   Post File = case.vtu
@@ -72,6 +72,12 @@ End
 
 Solver 3
     Equation = "PrintTemp"
+    Procedure = "../Coupler_Solver_New.so" "CouplerSolver"
+    Exec Solver = before timestep
+End
+
+Solver 4
+    Equation = "AfterTime"
     Procedure = "../Coupler_Solver_New.so" "CouplerSolver"
     Exec Solver = after timestep
 End

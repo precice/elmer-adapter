@@ -56,14 +56,15 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
     INTEGER                         :: ongoing
     !--------------------------Variables-End-------------------------------------------
 
-    integer, dimension (11) :: vertecies
+    integer, dimension (11) :: vertecies,coupling
+    REAL(KIND=dp), POINTER              :: CoordValsCoupling(:)
 
 
     !--------------------------SAVE-Start-------------------------------------------
     SAVE meshID,readDataID,writeDataID
     SAVE meshName,readDataName,writeDataName
     SAVE itask
-    SAVE BCPerm,CoordVals,vertexIDs
+    SAVE BCPerm,CoordVals,vertexIDs,CoordValsCoupling
     SAVE readData,writeData
     SAVE vertexSize
 
@@ -80,11 +81,15 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
     rank = 0
     commsize = 1
     !--------------------------Initialize-End-------------------------------------------
-    vertecies = (/14, 70,89,108,127,146,165,184,203,222,42/)
+    ! vertecies = (/14, 70,89,108,127,146,165,184,203,222,42/)
 
     !-- Trusted VertexID for testing
     ! vertecies = (/1, 60,59,58,57,56,55,54,53,52,3/)
 
+
+    !----Dirichlet vertices
+    vertecies = (/13, 49,58,67,76,85,94,103,112,121,23/)
+    coupling = (/4, 14,15,16,17,18,19,20,21,22,3/)
 
     select case(itask)
         ! TODO make enum
@@ -387,12 +392,19 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
         END DO
     case(10)
         ALLOCATE( CoordVals(3*11) )  
+        ALLOCATE( CoordValsCoupling(3*11) )  
         DO i=1,11
             
             
             CoordVals(3*i-2) = mesh % Nodes % x(vertecies(i))
             CoordVals(3*i-1) = mesh % Nodes % y(vertecies(i))
             CoordVals(3*i) = mesh % Nodes % z(vertecies(i))
+
+            
+            CoordValsCoupling(3*i-2) = mesh % Nodes % x(coupling(i))
+            CoordValsCoupling(3*i-1) = mesh % Nodes % y(coupling(i))
+            CoordValsCoupling(3*i) = mesh % Nodes % z(coupling(i))
+
             ! readDataVariable % Values(readDataVariable % Perm(i)) = j
         END DO
         itask = 11
@@ -402,17 +414,26 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
 
         CALL Info('CouplerSolver',"Temperature")
         DO i = 1, 11
-            write(infoMessage,'(A,I5,A,F10.4,A,F10.2,A,F10.2)') 'Node: ',vertecies(i),' Value: ', &
+
+
+            write(infoMessage,'(A,I5,A,F10.4,A,F10.2,A,F10.2,A,I5,A,F10.4,A,F10.2,A,F10.2)') 'N: ',vertecies(i),' V: ', &
                                 readDataVariable % Values(readDataVariable % Perm(vertecies(i))), &
-                                ' X= ', CoordVals(3*i-2), ' Y= ', CoordVals(3*i-1)   
+                                ' X= ', CoordVals(3*i-2), ' Y= ', CoordVals(3*i-1), &
+                                ' N: ',coupling(i),' V: ', &
+                                readDataVariable % Values(readDataVariable % Perm(coupling(i))), &
+                                ' X= ', CoordValsCoupling(3*i-2), ' Y= ', CoordValsCoupling(3*i-1) 
             CALL Info('CouplerSolver',infoMessage)
+
         END DO
 
         CALL Info('CouplerSolver',"temperature loads")
         DO i = 1, 11
-            write(infoMessage,'(A,I5,A,F10.4,A,F10.2,A,F10.2)') 'Node: ',vertecies(i),' Value: ', &
-                                 writeDataVariable % Values(readDataVariable % Perm(vertecies(i))), &
-                                ' X= ', CoordVals(3*i-2), ' Y= ', CoordVals(3*i-1)   
+            write(infoMessage,'(A,I5,A,F10.4,A,F10.2,A,F10.2,A,I5,A,F10.4,A,F10.2,A,F10.2)') 'N: ',vertecies(i),' V: ', &
+            writeDataVariable % Values(readDataVariable % Perm(vertecies(i))), &
+                                ' X= ', CoordVals(3*i-2), ' Y= ', CoordVals(3*i-1), &
+                                ' N: ',coupling(i),' V: ', &
+                                writeDataVariable % Values(readDataVariable % Perm(coupling(i))), &
+                                ' X= ', CoordValsCoupling(3*i-2), ' Y= ', CoordValsCoupling(3*i-1) 
             CALL Info('CouplerSolver',infoMessage)
         END DO
     end select

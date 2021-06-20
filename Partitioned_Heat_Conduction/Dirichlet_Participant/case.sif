@@ -71,35 +71,21 @@ Solver 1
 End
 
 Solver 2
-    Equation = "Initialize"
+    Equation = "AllocateCoord"
     Procedure = "../Coupler_Solver_New.so" "CouplerSolver"
-    readDataName = String "Temperature"
-    writeDataName = String "temperature loads"
     Exec Solver = before all
 End
 
 Solver 3
-    Equation = "ReadData"
+    Equation = "PrintTemp"
     Procedure = "../Coupler_Solver_New.so" "CouplerSolver"
-    readDataName = String "Temperature"
-    writeDataName = String "temperature loads"
     Exec Solver = before timestep
 End
 
 Solver 4
-    Equation = "writeDataAdvance"
+    Equation = "AfterTime"
     Procedure = "../Coupler_Solver_New.so" "CouplerSolver"
-    readDataName = String "Temperature"
-    writeDataName = String "temperature loads"
     Exec Solver = after timestep
-End
-
-Solver 5
-    Equation = "Finalize"
-    Procedure = "../Coupler_Solver_New.so" "CouplerSolver"
-    readDataName = String "Temperature"
-    writeDataName = String "temperature loads"
-    Exec Solver = after all
 End
 
 Equation 1
@@ -129,6 +115,6 @@ End
 Boundary Condition 2
   Target Boundaries(1) = 2 
   Name = "Dirichlet_Coupling"
-  Temperature = Equals "Temperature"
+  Temperature = 0
   Coupler Interface = Logical True
 End
