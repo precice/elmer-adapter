@@ -37,9 +37,37 @@ MODULE HelperMethods
             CALL Info('CouplerSolver',infoMessage)
 
         END DO 
-    
-        
+
     END SUBROUTINE Print
+
+    SUBROUTINE PrintDomain(dataName,mesh)
+
+        !-------------------------Strings----------------------------------------------
+        CHARACTER(LEN=MAX_NAME_LEN)         :: dataName
+        CHARACTER(LEN=MAX_NAME_LEN)         :: infoMessage
+        !-------------------------Elmer_Types----------------------------------------------
+        TYPE(Variable_t), POINTER           :: dataVariable
+        TYPE(Mesh_t), POINTER               :: mesh
+        !------------------------Data Arrays----------------------------------------------
+        REAL(KIND=dp), POINTER              :: CoordVals(:)
+        INTEGER, POINTER                    :: BCPerm(:)
+        !--------------------------Iterators-------------------------------------
+        INTEGER                             :: i,j
+    
+        dataVariable  => VariableGet( mesh % Variables, dataName)
+
+        CALL Info('CouplerSolver','Printing ' //TRIM(dataName))
+        DO i = 1, mesh % NumberOfNodes
+            
+            
+            write(infoMessage,'(A,I5,A,F10.4,A,F10.2,A,F10.2)') 'Node: ',i,' Value: ' &
+                            ,dataVariable % Values(dataVariable % Perm(i)),&
+                            ' X= ', mesh % Nodes % x(i), ' Y= ', mesh % Nodes % y(i) 
+                                                          
+            CALL Info('CouplerSolver',infoMessage)
+
+        END DO 
+    END SUBROUTINE PrintDomain
 
     SUBROUTINE CreateVariable(dataName,dataType,mesh,BCPerm,Solver,solverParams)
         !-------------------------Strings-----------------------------------------------
@@ -330,7 +358,6 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
         CALL Info('CouplerSolver','Printing write Data')
         CALL Print(writeDataName,mesh ,BCPerm,CoordVals)
         
-
         CALL Info('CouplerSolver','Printing read Data')
         CALL Print(readDataName,mesh ,BCPerm,CoordVals)
 
@@ -343,12 +370,11 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
         ELSE
             itask = 2
         END IF
-
-        
+          
     case(4)    
         !----------------------------------------Finailize--------------------------------------
         CALL Info('CouplerSolver','Precice Finalize')
-        CALL precicef_finalize()    
+        CALL precicef_finalize()
     end select
 
 

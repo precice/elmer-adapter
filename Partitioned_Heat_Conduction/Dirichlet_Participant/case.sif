@@ -129,6 +129,6 @@ End
 Boundary Condition 2
   Target Boundaries(1) = 2 
   Name = "Dirichlet_Coupling"
-  
+  Temperature = Equals "Temperature"
   Coupler Interface = Logical True
 End

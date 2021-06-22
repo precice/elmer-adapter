@@ -120,7 +120,7 @@ End
 Boundary Condition 1
   Target Boundaries(1) = 1 
   Name = "Neumann_Coupling"
-  Heat Flux = 0
+  Heat Flux = Equals "temperature loads"
   Coupler Interface = Logical True
 End
 
