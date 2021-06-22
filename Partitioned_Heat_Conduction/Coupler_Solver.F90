@@ -76,6 +76,56 @@ MODULE HelperMethods
 
     END SUBROUTINE CreateVariable
     
+    
+
+    SUBROUTINE CopyReadData(dataName,mesh,BCPerm,copyData)
+        !-------------------------Strings-----------------------------------------------
+        CHARACTER(LEN=MAX_NAME_LEN)         :: dataName
+        !-------------------------Elmer_Types----------------------------------------------
+        TYPE(Variable_t), POINTER           :: dataVariable
+        TYPE(Mesh_t), POINTER               :: mesh
+        ! !------------------------Data Arrays----------------------------------------------
+        REAL(KIND=dp), POINTER              :: copyData(:)
+        INTEGER, POINTER                    :: BCPerm(:)
+        !--------------------------Iterators-------------------------------------
+        INTEGER                             :: i,j
+
+
+        dataVariable  => VariableGet( mesh % Variables, dataName)
+
+        DO i = 1, mesh % NumberOfNodes
+            j = BCPerm(i)
+            IF(j == 0) CYCLE
+            dataVariable % Values(dataVariable % Perm(i)) = copyData(j)
+            
+
+        END DO 
+
+    END SUBROUTINE CopyReadData
+
+    SUBROUTINE CopyWriteData(dataName,mesh,BCPerm,copyData)
+        !-------------------------Strings-----------------------------------------------
+        CHARACTER(LEN=MAX_NAME_LEN)         :: dataName
+        !-------------------------Elmer_Types----------------------------------------------
+        TYPE(Variable_t), POINTER           :: dataVariable
+        TYPE(Mesh_t), POINTER               :: mesh
+        !------------------------Data Arrays----------------------------------------------
+        REAL(KIND=dp), POINTER              :: copyData(:)
+        INTEGER, POINTER                    :: BCPerm(:)
+        !--------------------------Iterators-------------------------------------
+        INTEGER                             :: i,j
+
+
+        dataVariable  => VariableGet( mesh % Variables, dataName)
+
+        DO i = 1, mesh % NumberOfNodes
+            j = BCPerm(i)
+            IF(j == 0) CYCLE
+            
+            copyData(j) = dataVariable % Values(dataVariable % Perm(i)) 
+
+        END DO 
+    END SUBROUTINE CopyWriteData
 
 END MODULE HelperMethods
 
@@ -218,9 +268,47 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
         CALL Print(writeDataName,mesh ,BCPerm,CoordVals)
 
         !------------------------------------------------------------------------------
+        !---------------Initializing Precice------------------------------------------
+        CALL precicef_create(participantName, configPath, rank, commsize)
+
+        writeInitialData(1:50)='                                                  '
+        readItCheckp(1:50)='                                                  '
+        writeItCheckp(1:50)='                                                  '
+
+        CALL precicef_get_dims(dimensions)
+        CALL precicef_get_mesh_id(meshName, meshID)
+        CALL precicef_set_vertices(meshID, vertexSize, CoordVals, vertexIDs)
+
+        CALL precicef_get_data_id(readDataName,meshID,readDataID)
+        CALL precicef_get_data_id(writeDataName,meshID,writeDataID)
+
+        ALLOCATE(readData(VertexSize))
+        ALLOCATE(writeData(VertexSize))
+
+        readData = 0
+        writeData = 0
+
+        CALL precicef_initialize(dt)
+        CALL precicef_is_action_required(writeInitialData, bool)
+
+        IF (bool.EQ.1) THEN
+            CALL Info('CouplerSolver','Writing Initial Data')
+        ENDIF
+
+        CALL precicef_initialize_data()
+      
+        CALL precicef_is_coupling_ongoing(ongoing)
+        
 
         itask = 2
     case(2)
+
+        CALL Info('CouplerSolver','Reading Data')
+        CALL precicef_read_bsdata(readDataID, vertexSize, vertexIDs, readData)
+
+        CALL Info('CouplerSolver','Copy Read Data to Variable')
+        CALL CopyReadData(readDataName,mesh,BCPerm,readData)
+
         CALL Info('CouplerSolver','Printing read Data')
         CALL Print(readDataName,mesh ,BCPerm,CoordVals)
         
@@ -233,7 +321,12 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
     case(3)
         !-------------------Copy Write values from Variable to buffer---------------------
         
-        
+        CALL Info('CouplerSolver','Copy Write Data to Variable')
+        CALL CopyWriteData(writeDataName,mesh,BCPerm,writeData)
+
+        CALL Info('CouplerSolver','Writing Data')
+        CALL precicef_write_bsdata(writeDataID, vertexSize, vertexIDs, writeData)
+
         CALL Info('CouplerSolver','Printing write Data')
         CALL Print(writeDataName,mesh ,BCPerm,CoordVals)
         
@@ -241,15 +334,22 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
         CALL Info('CouplerSolver','Printing read Data')
         CALL Print(readDataName,mesh ,BCPerm,CoordVals)
 
-        itask = 2
-    case(4)    
-    end select
+        !--------------------Advance time loop---------------------------------------
+        CALL precicef_advance(dt)
+        CALL precicef_is_coupling_ongoing(ongoing)
 
-    
-
-    
+        IF(ongoing.EQ.0) THEN
+            itask = 4
+        ELSE
+            itask = 2
+        END IF
 
         
+    case(4)    
+        !----------------------------------------Finailize--------------------------------------
+        CALL Info('CouplerSolver','Precice Finalize')
+        CALL precicef_finalize()    
+    end select
 
 
     CALL Info('CouplerSolver',' Ended '//achar(27)//'[0m.')

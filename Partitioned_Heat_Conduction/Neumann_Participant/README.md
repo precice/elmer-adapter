@@ -11,7 +11,7 @@ This part of the domain should be the Neumann coupling part.
 
 # Generating Mesh Files
 It can be done in 2 ways
-* using ElmerGrid : just type ElmerGrid 14 2 Reference_Problem.msh and the mesh files will be generated in a seperate folder under same name
+* using ElmerGrid : just type ElmerGrid 14 2 Neumann_Participant.msh and the mesh files will be generated in a seperate folder under same name
 * using ElmerGUI  : open the msh file in ElmerGUI, define problem, save the project and generate .sif file, the mesh files will be generated in the location defined
                   in the model/setup under MeshDB parameter. For more information please refer to ElmerGUI Tutorials 
                   http://www.nic.funet.fi/pub/sci/physics/elmer/doc/ElmerTutorials.pdf

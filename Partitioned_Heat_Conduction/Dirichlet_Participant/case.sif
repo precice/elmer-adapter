@@ -86,12 +86,20 @@ Solver 3
     Exec Solver = before timestep 
 End
 
-Solver 3
+Solver 4
     Equation = "WriteDataAdvance"
     Procedure = "../Coupler_Solver.so" "CouplerSolver"
     readDataName = String "Temperature"
     writeDataName = String "temperature loads"
     Exec Solver = after timestep 
+End
+
+Solver 5
+    Equation = "Finalize"
+    Procedure = "../Coupler_Solver.so" "CouplerSolver"
+    readDataName = String "Temperature"
+    writeDataName = String "temperature loads"
+    Exec Solver = after all 
 End
 
 Equation 1

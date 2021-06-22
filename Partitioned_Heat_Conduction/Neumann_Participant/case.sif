@@ -71,7 +71,7 @@ End
 
 Solver 2
     Equation = "Initialize"
-    Procedure = "../Coupler_Solver_New.so" "CouplerSolver"
+    Procedure = "../Coupler_Solver.so" "CouplerSolver"
     readDataName = String "temperature loads"
     writeDataName = String "Temperature"
     Exec Solver = before all
@@ -79,7 +79,7 @@ End
 
 Solver 3
     Equation = "ReadData"
-    Procedure = "../Coupler_Solver_New.so" "CouplerSolver"
+    Procedure = "../Coupler_Solver.so" "CouplerSolver"
     readDataName = String "temperature loads"
     writeDataName = String "Temperature"
     Exec Solver = before timestep 
@@ -87,7 +87,7 @@ End
 
 Solver 4
     Equation = "writeDataAdvance"
-    Procedure = "../Coupler_Solver_New.so" "CouplerSolver"
+    Procedure = "../Coupler_Solver.so" "CouplerSolver"
     readDataName = String "temperature loads"
     writeDataName = String "Temperature"
     Exec Solver = after timestep 
@@ -95,7 +95,7 @@ End
 
 Solver 5
     Equation = "Finalize"
-    Procedure = "../Coupler_Solver_New.so" "CouplerSolver"
+    Procedure = "../Coupler_Solver.so" "CouplerSolver"
     readDataName = String "temperature loads"
     writeDataName = String "Temperature"
     Exec Solver = after all 
@@ -120,8 +120,7 @@ End
 Boundary Condition 1
   Target Boundaries(1) = 1 
   Name = "Neumann_Coupling"
-  Heat Flux = Equals "temperature loads"
-  Temperature = Equals "Temperature"
+  Heat Flux = 0
   Coupler Interface = Logical True
 End
 
