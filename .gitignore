@@ -9,6 +9,7 @@
 # ignoring binary files
 *.out
 *.so
+*.mod
 
 # ignoring precice log files
 *.log
