@@ -43,8 +43,9 @@ MODULE HelperMethods
     SUBROUTINE PrintDomain(dataName,mesh)
 
         !-------------------------Strings----------------------------------------------
-        CHARACTER(LEN=MAX_NAME_LEN)         :: dataName
+        ! CHARACTER(LEN=MAX_NAME_LEN)         :: dataName
         CHARACTER(LEN=MAX_NAME_LEN)         :: infoMessage
+        character(len=*), intent(in) ::      dataName
         !-------------------------Elmer_Types----------------------------------------------
         TYPE(Variable_t), POINTER           :: dataVariable
         TYPE(Mesh_t), POINTER               :: mesh
@@ -149,9 +150,12 @@ MODULE HelperMethods
         DO i = 1, mesh % NumberOfNodes
             j = BCPerm(i)
             IF(j == 0) CYCLE
-            
-            copyData(j) = dataVariable % Values(dataVariable % Perm(i)) 
-
+            copyData(j) = dataVariable % Values(dataVariable % Perm(i))
+            ! IF( dataName == "temperature loads") THEN
+            !     copyData(j) = -1 * dataVariable % Values(dataVariable % Perm(i)) 
+            ! ELSE
+            !     copyData(j) = dataVariable % Values(dataVariable % Perm(i))
+            ! END IF
         END DO 
     END SUBROUTINE CopyWriteData
 
@@ -178,7 +182,7 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
     !--------------------------MPI-Variables-------------------------------------
     INTEGER                         :: rank,commsize
     !--------------------------Precice-Control-------------------------------------
-    INTEGER                         :: itask = 1
+    INTEGER                         :: itask = 5
 
     !--------------------------Logic-Control-------------------------------------
     LOGICAL                             :: Found
@@ -220,7 +224,7 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
     INTEGER                         :: ongoing
     !--------------------------Variables-End-------------------------------------------
 
-    ! integer, dimension (11) :: vertecies
+    integer, dimension (11) :: vertecies
 
     !--------------------------SAVE-Start-------------------------------------------
     SAVE meshID,readDataID,writeDataID
@@ -243,7 +247,8 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
     commsize = 1
     !--------------------------Initialize-End-------------------------------------------
     !----Dirichlet
-    ! vertecies = (/3,22,21,20,19,18,17,16,15,14,4/)
+    vertecies = (/3,22,21,20,19,18,17,16,15,14,4/)
+    ! vertecies = (/2,32,33,34,35,36,37,38,39,40,1/)
     !----Neumann
     ! vertecies = (/4,32,33,34,35,36,37,38,39,40,1/)
     
@@ -337,7 +342,7 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
         
         IF (bool.EQ.1) THEN
             CALL Info('CouplerSolver','Writing Initial Data')
-            CALL CopyWriteData(writeDataName,mesh,BCPerm,writeData)
+            ! CALL CopyWriteData(writeDataName,mesh,BCPerm,writeData)
             CALL precicef_write_bsdata(writeDataID, vertexSize, vertexIDs, writeData)
             CALL precicef_mark_action_fulfilled(writeInitialData)
         ENDIF
@@ -395,31 +400,31 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
         CALL Info('CouplerSolver','Precice Finalize')
         CALL precicef_finalize()
 
-    ! case(5)
-
-    !     CALL Info('CouplerSolver','Printing Temperature')
-    !     readDataVariable  => VariableGet( mesh % Variables, 'temperature ')
-    !     DO i = 1, 11
+    case(5)
+        CALL PrintDomain('temperature loads',mesh)
+        ! CALL Info('CouplerSolver','Printing Temperature')
+        ! readDataVariable  => VariableGet( mesh % Variables, 'temperature ')
+        ! DO i = 1, 11
             
             
-    !         write(infoMessage,'(A,I5,A,F10.4)') 'Node: ',vertecies(i),' Value: ', &
-    !                     readDataVariable % Values(readDataVariable % Perm(vertecies(i)))
+        !     write(infoMessage,'(A,I5,A,F10.4)') 'Node: ',vertecies(i),' Value: ', &
+        !                 readDataVariable % Values(readDataVariable % Perm(vertecies(i)))
                           
-    !         CALL Info('CouplerSolver',infoMessage)
+        !     CALL Info('CouplerSolver',infoMessage)
             
-    !     END DO
+        ! END DO
 
-    !     CALL Info('CouplerSolver','Printing temperature loads')
-    !     readDataVariable  => VariableGet( mesh % Variables, 'temperature loads')
-    !     DO i = 1, 11
+        ! CALL Info('CouplerSolver','Printing temperature loads')
+        ! readDataVariable  => VariableGet( mesh % Variables, 'temperature loads')
+        ! DO i = 1, 11
             
             
-    !         write(infoMessage,'(A,I5,A,F10.4)') 'Node: ',vertecies(i),' Value: ', &
-    !                     readDataVariable % Values(readDataVariable % Perm(vertecies(i)))
+        !     write(infoMessage,'(A,I5,A,F10.4)') 'Node: ',vertecies(i),' Value: ', &
+        !                 readDataVariable % Values(readDataVariable % Perm(vertecies(i)))
                           
-    !         CALL Info('CouplerSolver',infoMessage)
+        !     CALL Info('CouplerSolver',infoMessage)
             
-    !     END DO
+        ! END DO
     end select
 
 

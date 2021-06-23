@@ -14,7 +14,7 @@ Simulation
   Output Intervals = 1
   Timestepping Method = BDF
   BDF Order = 5
-  Timestep intervals = 5
+  Timestep intervals = 3
   Timestep Sizes = 1
   Solver Input File = case.sif
   Post File = case.vtu
@@ -39,7 +39,7 @@ End
 Solver 1
   Equation = Heat Equation
   Procedure = "HeatSolve" "HeatSolver"
-  Calculate Loads = True
+  Calculate Loads = Logical True
   Variable = Temperature
   Exec Solver = Always
   Stabilize = True
@@ -64,19 +64,19 @@ Solver 1
   Linear System Precondition Recompute = 1
 End
 
+!Solver 2
+!    Equation = "AllocateCoord"
+!    Procedure = "../Coupler_Solver.so" "CouplerSolver"
+!    Exec Solver = before all
+!End
+!
+!Solver 3
+!    Equation = "PrintTemp"
+!    Procedure = "../Coupler_Solver.so" "CouplerSolver"
+!    Exec Solver = before timestep
+!End
+
 Solver 2
-    Equation = "AllocateCoord"
-    Procedure = "../Coupler_Solver.so" "CouplerSolver"
-    Exec Solver = before all
-End
-
-Solver 3
-    Equation = "PrintTemp"
-    Procedure = "../Coupler_Solver.so" "CouplerSolver"
-    Exec Solver = before timestep
-End
-
-Solver 4
     Equation = "AfterTime"
     Procedure = "../Coupler_Solver.so" "CouplerSolver"
     Exec Solver = after timestep
