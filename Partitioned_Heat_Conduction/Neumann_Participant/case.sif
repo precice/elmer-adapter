@@ -15,7 +15,7 @@ Simulation
   Timestepping Method = BDF
   BDF Order = 5
   Timestep intervals = 3
-  Timestep Sizes = 1
+  Timestep Sizes = 0.5
   Solver Input File = case.sif
   Post File = case.vtu
 
@@ -45,7 +45,7 @@ Solver 1
   Equation = Heat Equation
   Procedure = "HeatSolve" "HeatSolver"
   Variable = Temperature
-  Calculate Loads = True
+  Calculate Loads = Logical True
   Exec Solver = Always
   Stabilize = True
   Bubbles = False
@@ -68,6 +68,32 @@ Solver 1
   Linear System Residual Output = 10
   Linear System Precondition Recompute = 1
 End
+
+!Solver 1
+!  Equation = "Heat Equation"
+!  Variable = Temperature
+!  Procedure = "HeatSolve" "HeatSolver"
+!  Exec Solver = Always
+!
+!
+!  Linear System Solver = "Direct"
+!  Linear System Direct Method = "umfpack"
+!
+!  Steady State Convergence Tolerance = 1.0e-5
+!
+!  Stabilize = True
+!
+!  Nonlinear System Convergence Tolerance = 1.0e-05
+!  Nonlinear System Max Iterations = 1
+!
+!! some relaxation is necessary for convergence
+!! the level of relxation depends on the setup. 
+!  Nonlinear System Relaxation Factor = 0.4
+!  Nonlinear System Newton After Iterations = 3
+!  Nonlinear System Newton After Tolerance = 1.0e-02
+!
+!  Calculate Loads = Logical True
+!End
 
 Solver 2
     Equation = "Initialize"
@@ -120,7 +146,11 @@ End
 Boundary Condition 1
   Target Boundaries(1) = 1 
   Name = "Neumann_Coupling"
-  Heat Flux = Equals "temperature loads"
+  !Temperature Load = Real -0.2
+  !Temperature Load = Real 1.5 3 4 1.5 8 7 1.5 1.5 1.5 1.5 1.5
+  Temperature Load = Equals "temperature loads"
+  !Temperature = Variable Coordinate
+  !      Real MATC "1 + (tx(0)^2) + (2 * (tx(1) ^ 2))"
   Coupler Interface = Logical True
 End
 

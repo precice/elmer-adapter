@@ -32,7 +32,7 @@ MODULE HelperMethods
             
             write(infoMessage,'(A,I5,A,I5,A,F10.4,A,F10.2,A,F10.2)') 'Node: ',i,' Index: ',j,' Value: ' &
                             ,dataVariable % Values(dataVariable % Perm(i)),&
-                            ' X= ', CoordVals(3*j-2), ' Y= ', CoordVals(3*j-1)  
+                            ' X= ', CoordVals(2*j-1), ' Y= ', CoordVals(2*j)  
                                                           
             CALL Info('CouplerSolver',infoMessage)
 
@@ -204,7 +204,8 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
     !--------------------------Precice-Variables-------------------------------------
     !-------------------------Strings----------------------------------------------
     CHARACTER(LEN=MAX_NAME_LEN)         :: participantName, meshName, configPath, readDataName,writeDataName
-    CHARACTER(LEN=MAX_NAME_LEN)         :: writeInitialData, readItCheckp, writeItCheckp ! ?? Do not know
+    ! CHARACTER(LEN=MAX_NAME_LEN)         :: writeInitialData, readItCheckp, writeItCheckp ! ?? Do not know
+    CHARACTER*50                        :: writeInitialData, readItCheckp, writeItCheckp
     !-------------------------IDs-Integer----------------------------------------------
     INTEGER                         :: meshID,readDataID, writeDataID
     !------------------------Data Arrays----------------------------------------------
@@ -218,6 +219,8 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
     INTEGER                         :: bool
     INTEGER                         :: ongoing
     !--------------------------Variables-End-------------------------------------------
+
+    ! integer, dimension (11) :: vertecies
 
     !--------------------------SAVE-Start-------------------------------------------
     SAVE meshID,readDataID,writeDataID
@@ -239,8 +242,14 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
     rank = 0
     commsize = 1
     !--------------------------Initialize-End-------------------------------------------
-
+    !----Dirichlet
+    ! vertecies = (/3,22,21,20,19,18,17,16,15,14,4/)
+    !----Neumann
+    ! vertecies = (/4,32,33,34,35,36,37,38,39,40,1/)
     
+    ! CALL Info('CouplerSolver','Enter Key To Continue')
+    ! read(*,*)
+
 
     select case(itask)
         ! TODO make enum
@@ -267,16 +276,18 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
             BCPerm, vertexSize )
         CALL Info('CouplerSolver','Number of nodes at interface:'//TRIM(I2S(vertexSize)))
 
-        ALLOCATE( CoordVals(3*vertexSize) )
+        
+
+        ALLOCATE( CoordVals(2*vertexSize) )
         ALLOCATE(vertexIDs(vertexSize)) 
         DO i=1,Mesh % NumberOfNodes
             j = BCPerm(i)
-            CoordVals(3*j-2) = mesh % Nodes % x(i)
-            CoordVals(3*j-1) = mesh % Nodes % y(i)
-            CoordVals(3*j) = mesh % Nodes % z(i)
-            IF(j /= 0) THEN
-                vertexIDs(j) = j
-            END IF
+            CoordVals(2*j-1) = mesh % Nodes % x(i)
+            CoordVals(2*j) = mesh % Nodes % y(i)
+            ! CoordVals(3*j) = mesh % Nodes % z(i)
+            ! IF(j /= 0) THEN
+            !     vertexIDs(j) = j
+            ! END IF
         END DO
         CALL Info('CouplerSolver','Created nodes at interface')   
         
@@ -316,11 +327,19 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
         readData = 0
         writeData = 0
 
-        CALL precicef_initialize(dt)
-        CALL precicef_is_action_required(writeInitialData, bool)
 
+        !----------------------Initializing Data------------------------------------
+        CALL precicef_initialize(dt)
+        CALL precicef_action_write_initial_data(writeInitialData)
+        CALL precicef_is_action_required(writeInitialData, bool)
+        
+        
+        
         IF (bool.EQ.1) THEN
             CALL Info('CouplerSolver','Writing Initial Data')
+            CALL CopyWriteData(writeDataName,mesh,BCPerm,writeData)
+            CALL precicef_write_bsdata(writeDataID, vertexSize, vertexIDs, writeData)
+            CALL precicef_mark_action_fulfilled(writeInitialData)
         ENDIF
 
         CALL precicef_initialize_data()
@@ -375,6 +394,32 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
         !----------------------------------------Finailize--------------------------------------
         CALL Info('CouplerSolver','Precice Finalize')
         CALL precicef_finalize()
+
+    ! case(5)
+
+    !     CALL Info('CouplerSolver','Printing Temperature')
+    !     readDataVariable  => VariableGet( mesh % Variables, 'temperature ')
+    !     DO i = 1, 11
+            
+            
+    !         write(infoMessage,'(A,I5,A,F10.4)') 'Node: ',vertecies(i),' Value: ', &
+    !                     readDataVariable % Values(readDataVariable % Perm(vertecies(i)))
+                          
+    !         CALL Info('CouplerSolver',infoMessage)
+            
+    !     END DO
+
+    !     CALL Info('CouplerSolver','Printing temperature loads')
+    !     readDataVariable  => VariableGet( mesh % Variables, 'temperature loads')
+    !     DO i = 1, 11
+            
+            
+    !         write(infoMessage,'(A,I5,A,F10.4)') 'Node: ',vertecies(i),' Value: ', &
+    !                     readDataVariable % Values(readDataVariable % Perm(vertecies(i)))
+                          
+    !         CALL Info('CouplerSolver',infoMessage)
+            
+    !     END DO
     end select
 
 

@@ -55,9 +55,9 @@
       <max-time value="3.0"/>
       <!-- <max-time-windows value="3"/> -->
       <!-- <time-window-size value="1" valid-digits="10" method="fixed"/> -->
-      <time-window-size value="1"/>
+      <time-window-size value="0.5"/>
       <exchange data="temperature loads" mesh="dirichlet-mesh" from="dirichlet" to="neumann" />
-      <exchange data="temperature" mesh="neumann-mesh" from="neumann" to="dirichlet" />
+      <exchange data="temperature" mesh="neumann-mesh" from="neumann" to="dirichlet" initialize="yes" />
     </coupling-scheme:serial-explicit>
     <!-- <coupling-scheme:serial-implicit>
       <participants first="Dirichlet" second="Neumann"/>
