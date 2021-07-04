@@ -13,7 +13,7 @@ Simulation
   Steady State Max Iterations = 10
   Output Intervals = 1
   Timestepping Method = BDF
-  BDF Order = 5
+  BDF Order = 2
   Timestep intervals = 3
   Timestep Sizes = 1
   Solver Input File = case.sif

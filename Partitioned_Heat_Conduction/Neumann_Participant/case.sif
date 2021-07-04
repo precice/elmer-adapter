@@ -13,8 +13,8 @@ Simulation
   Steady State Max Iterations = 3
   Output Intervals = 1
   Timestepping Method = BDF
-  BDF Order = 5
-  Timestep intervals = 5
+  BDF Order = 2
+  Timestep intervals = 3
   Timestep Sizes = 1
   Solver Input File = case.sif
   Post File = case.vtu
@@ -121,6 +121,10 @@ Boundary Condition 1
   Target Boundaries(1) = 1 
   Name = "Neumann_Coupling"
   Temperature Load = Equals "temperature loads"
+  !Temperature Load = Variable Coordinate 2
+  !             Real Procedure "UDF_Boundary" "SetLoads"
+  !Temperature = Variable Coordinate
+  !      Real MATC "1 + (tx(0)^2) + (2 * (tx(1) ^ 2))"
   Coupler Interface = Logical True
 End
 
