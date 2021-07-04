@@ -76,11 +76,11 @@ End
 !    Exec Solver = before timestep
 !End
 
-Solver 2
-    Equation = "AfterTime"
-    Procedure = "../Coupler_Solver.so" "CouplerSolver"
-    Exec Solver = after timestep
-End
+!Solver 2
+!    Equation = "AfterTime"
+!    Procedure = "../Coupler_Solver.so" "CouplerSolver"
+!    Exec Solver = after timestep
+!End
 
 Equation 1
   Name = "Heat_Plate"
@@ -93,14 +93,21 @@ Material 1
   Density = 1.0
 End
 
+Initial Condition 1
+  Name = "Temp_Init"
+  Temperature  = Variable Coordinate
+               Real MATC "1 + (tx(0)^2) + (3 * (tx(1) ^ 2))"
+End
+
 Body Force 1
   Name = "BodyForce 1"
-  Heat Source = -6
+  !Heat Source = -6
+  Heat Source = Real MATC "1.2-2 - 2*3"
 End
 
 Boundary Condition 1
   Target Boundaries(1) = 1 
   Name = "Plate_Boundary"
-  Temperature = Variable Coordinate
-        Real MATC "1 + (tx(0)^2) + (2 * (tx(1) ^ 2))"
+  Temperature = Variable Coordinate,Time
+        Real MATC "1 + (tx(0)^2) + (2 * (tx(1) ^ 2)) + 1.2 * tx(2)"
 End
