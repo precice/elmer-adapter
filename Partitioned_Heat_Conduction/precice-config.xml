@@ -52,24 +52,26 @@
 
     <coupling-scheme:serial-explicit>
       <participants first="dirichlet" second="neumann"/>
-      <max-time value="3.0"/>
-      <!-- <max-time-windows value="3"/> -->
-      <!-- <time-window-size value="1" valid-digits="10" method="fixed"/> -->
+      <max-time value="10.0"/>
+      <max-time-windows value="3"/> 
+      <time-window-size value="1" valid-digits="10" method="fixed"/> 
       <time-window-size value="1"/>
       <exchange data="temperature loads" mesh="dirichlet-mesh" from="dirichlet" to="neumann" />
       <exchange data="temperature" mesh="neumann-mesh" from="neumann" to="dirichlet" initialize="yes" />
     </coupling-scheme:serial-explicit>
+
+
     <!-- <coupling-scheme:serial-implicit>
-      <participants first="Dirichlet" second="Neumann"/>
-      <max-time value="1.0"/>
-      <time-window-size value="0.1"/>
+      <participants first="dirichlet" second="neumann"/>
+      <max-time value="5.0"/>
+      <time-window-size value="1"/>
       <max-iterations value="100"/>
-      <exchange data="Flux" mesh="Dirichlet-Mesh" from="Dirichlet" to="Neumann" />
-      <exchange data="Temperature" mesh="Neumann-Mesh" from="Neumann" to="Dirichlet" initialize="true"/>
-      <relative-convergence-measure data="Flux" mesh="Dirichlet-Mesh" limit="1e-5"/>
-      <relative-convergence-measure data="Temperature" mesh="Neumann-Mesh" limit="1e-5"/>
+      <exchange data="temperature loads" mesh="dirichlet-mesh" from="dirichlet" to="neumann" />
+      <exchange data="temperature" mesh="neumann-mesh" from="neumann" to="dirichlet" initialize="true"/>
+      <relative-convergence-measure data="temperature loads" mesh="dirichlet-mesh" limit="1e-5"/>
+      <relative-convergence-measure data="temperature" mesh="neumann-mesh" limit="1e-5"/>
       <acceleration:IQN-ILS>
-        <data name="Temperature" mesh="Neumann-Mesh"/>
+        <data name="temperature" mesh="neumann-mesh"/>
         <initial-relaxation value="0.1"/>
         <max-used-iterations value="10"/>
         <time-windows-reused value="5"/>

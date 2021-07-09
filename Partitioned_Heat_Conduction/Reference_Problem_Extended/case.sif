@@ -34,6 +34,7 @@ Body 1
   Equation = 1
   Material = 1
   Body Force = 1
+  Initial Condition = 1
 End
 
 Solver 1

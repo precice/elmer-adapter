@@ -14,7 +14,7 @@ Simulation
   Output Intervals = 1
   Timestepping Method = BDF
   BDF Order = 2
-  Timestep intervals = 3
+  Timestep intervals = 5
   Timestep Sizes = 1
   Solver Input File = case.sif
   Post File = case.vtu
@@ -39,6 +39,7 @@ Body 1
   Equation = 1
   Material = 1
   Body Force = 1
+  Initial Condition = 1
 End
 
 Solver 1
@@ -112,9 +113,16 @@ Material 1
   Density = 1.0
 End
 
+Initial Condition 1
+  Name = "Temp_Init"
+  Temperature  = Variable Coordinate
+               Real MATC "1 + (tx(0)^2) + (3 * (tx(1) ^ 2))"
+End
+
 Body Force 1
   Name = "BodyForce 1"
-  Heat Source = -6
+  !Heat Source = -6
+  Heat Source = Real MATC "1.2-2 - 2*3"
 End
 
 Boundary Condition 1
@@ -132,5 +140,5 @@ Boundary Condition 2
   Target Boundaries(1) = 2 
   Name = "Plate_Boundary"
   Temperature = Variable Coordinate
-        Real MATC "1 + (tx(0)^2) + (2 * (tx(1) ^ 2))"
+        Real MATC "1 + (tx(0)^2) + (3 * (tx(1) ^ 2)) + 1.2 * tx(2)"
 End

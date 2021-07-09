@@ -9,6 +9,10 @@ MODULE HelperMethods
 
     CONTAINS
 
+    ! SUBROUTINE StoreCheckpoint(writeData,t)
+
+    ! END SUBROUTINE StoreCheckpoint
+
     SUBROUTINE Print(dataName,mesh,BCPerm,CoordVals)
 
         !-------------------------Strings----------------------------------------------
@@ -255,6 +259,9 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
     ! CALL Info('CouplerSolver','Enter Key To Continue')
     ! read(*,*)
 
+    writeInitialData(1:50)='                                                  '
+    readItCheckp(1:50)='                                                  '
+    writeItCheckp(1:50)='                                                  '
 
     select case(itask)
         ! TODO make enum
@@ -342,7 +349,7 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
         
         IF (bool.EQ.1) THEN
             CALL Info('CouplerSolver','Writing Initial Data')
-            ! CALL CopyWriteData(writeDataName,mesh,BCPerm,writeData)
+            CALL CopyWriteData(writeDataName,mesh,BCPerm,writeData)
             CALL precicef_write_bsdata(writeDataID, vertexSize, vertexIDs, writeData)
             CALL precicef_mark_action_fulfilled(writeInitialData)
         ENDIF
@@ -354,6 +361,17 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
 
         itask = 2
     case(2)
+
+        CALL precicef_action_write_iter_checkp(writeItCheckp)
+        CALL precicef_is_action_required(writeItCheckp, bool)
+        
+        write(infoMessage,'(A,I2)') writeItCheckp,bool
+        CALL Info('CouplerSolver',infoMessage)
+
+        IF (bool.EQ.1) THEN
+          CALL Info('CouplerSolver','Writing iteration checkpoint')
+          CALL precicef_mark_action_fulfilled(writeItCheckp)
+        ENDIF
 
         CALL Info('CouplerSolver','Reading Data')
         CALL precicef_read_bsdata(readDataID, vertexSize, vertexIDs, readData)
@@ -387,6 +405,26 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
 
         !--------------------Advance time loop---------------------------------------
         CALL precicef_advance(dt)
+
+        CALL precicef_action_read_iter_checkp(readItCheckp)
+        CALL precicef_is_action_required(readItCheckp, bool)
+        
+
+        TimeVar => VariableGet( Solver % Mesh % Variables, "Time" )
+        Time = TimeVar % Values(2)
+        write(infoMessage,'(A,F10.4)') "TimeStep",Time
+        CALL Info('CouplerSolver',infoMessage)  
+        TimeVar % Values(1) = 1
+        IF (bool.EQ.1) THEN
+         
+          write(infoMessage,'(A,I2)') readItCheckp,bool
+          CALL Info('CouplerSolver',infoMessage)  
+          CALL Info('CouplerSolver','Reading iteration checkpoint')
+          CALL precicef_mark_action_fulfilled(readItCheckp)
+        ENDIF
+
+        
+
         CALL precicef_is_coupling_ongoing(ongoing)
 
         IF(ongoing.EQ.0) THEN
