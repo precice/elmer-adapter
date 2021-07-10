@@ -118,8 +118,10 @@ End
 Boundary Condition 1
   Target Boundaries(1) = 2 
   Name = "Neumann_Coupling"
-  Temperature = Variable Time,Coordinate
-        Real MATC "1.3 * tx(0) + 1 + (tx(1)^2) + (3 * (tx(2) ^ 2))"
+  !Temperature = Variable Time,Coordinate
+  !      Real MATC "1.3 * tx(0) + 1 + (tx(1)^2) + (3 * (tx(2) ^ 2))"
+  Heat Flux = Variable Coordinate 2
+           Real Procedure "../Adapter/UDF_Boundary.so" "setFlux"
   Coupler Interface = Logical True
 End
 
