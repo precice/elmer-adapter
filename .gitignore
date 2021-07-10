@@ -21,3 +21,4 @@ entities.sif
 # ignoring results directory
 Results/
 build/
+out/
