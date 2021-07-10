@@ -22,7 +22,7 @@ Simulation
   maskName = String "Coupler Interface"
   participantName = String "Neumann"
   meshName = String "Neumann-Mesh"
-  configPath = String "../precice-config.xml" 
+  configPath = String "./precice-config.xml" 
 End
 
 Constants
@@ -87,10 +87,34 @@ End
 
 Solver 3
   Equation = "Initialize"
-  Procedure = "../Adapter/Print_Module.so" "CouplerSolver"
-  readDataName = String "Temperature"
-  writeDataName = String "temperature loads"
-  Exec Solver = after timestep
+  Procedure = "../Adapter/Coupler_Solver.so" "CouplerSolver"
+  readDataName = String "temperature flux 1"
+  writeDataName = String "Temperature"
+  Exec Solver = before all
+End
+
+Solver 4
+    Equation = "ReadData"
+    Procedure = "../Adapter/Coupler_Solver.so" "CouplerSolver"
+    readDataName = String "temperature flux 1"
+    writeDataName = String "Temperature"
+    Exec Solver = before timestep 
+End
+
+Solver 5
+    Equation = "writeDataAdvance"
+    Procedure = "../Adapter/Coupler_Solver.so" "CouplerSolver"
+    readDataName = String "temperature flux 1"
+    writeDataName = String "Temperature"
+    Exec Solver = after timestep 
+End
+
+Solver 6
+    Equation = "Finalize"
+    Procedure = "../Adapter/Coupler_Solver.so" "CouplerSolver"
+    readDataName = String "temperature flux 1"
+    writeDataName = String "Temperature"
+    Exec Solver = after all 
 End
 
 Equation 1

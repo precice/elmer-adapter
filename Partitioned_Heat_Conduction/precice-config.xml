@@ -9,22 +9,22 @@
   <solver-interface dimensions="2">
 
     <data:scalar name="temperature"/>
-    <data:scalar name="temperature loads"/>
+    <data:scalar name="temperature flux 1"/>
 
     <mesh name="dirichlet-mesh">
       <use-data name="temperature"/>
-      <use-data name="temperature loads"/>
+      <use-data name="temperature flux 1"/>
     </mesh>
 
     <mesh name="neumann-mesh">
       <use-data name="temperature"/>
-      <use-data name="temperature loads"/>
+      <use-data name="temperature flux 1"/>
     </mesh>
 
     <participant name="dirichlet">
       <use-mesh name="dirichlet-mesh" provide="yes"/>
       <use-mesh name="neumann-mesh" from="neumann"/>
-      <write-data name="temperature loads" mesh="dirichlet-mesh"/>
+      <write-data name="temperature flux 1" mesh="dirichlet-mesh"/>
       <read-data name="temperature" mesh="dirichlet-mesh"/>
       <mapping:nearest-neighbor
         direction="read"
@@ -38,7 +38,7 @@
       <use-mesh name="neumann-mesh" provide="yes"/>
       <use-mesh name="dirichlet-mesh" from="dirichlet"/>
       <write-data name="temperature" mesh="neumann-mesh"/>
-      <read-data name="temperature loads" mesh="neumann-mesh"/>
+      <read-data name="temperature flux 1" mesh="neumann-mesh"/>
       <mapping:nearest-neighbor
         direction="read"
         from="dirichlet-mesh"
@@ -52,11 +52,11 @@
 
     <coupling-scheme:serial-explicit>
       <participants first="dirichlet" second="neumann"/>
-      <max-time value="10.0"/>
-      <max-time-windows value="3"/> 
-      <time-window-size value="1" valid-digits="10" method="fixed"/> 
-      <time-window-size value="1"/>
-      <exchange data="temperature loads" mesh="dirichlet-mesh" from="dirichlet" to="neumann" />
+      <max-time value="1.0"/>
+      <!-- <max-time-windows value="3"/> 
+      <time-window-size value="1" valid-digits="10" method="fixed"/>  -->
+      <time-window-size value="0.1"/>
+      <exchange data="temperature flux 1" mesh="dirichlet-mesh" from="dirichlet" to="neumann" />
       <exchange data="temperature" mesh="neumann-mesh" from="neumann" to="dirichlet" initialize="yes" />
     </coupling-scheme:serial-explicit>
 
@@ -66,9 +66,9 @@
       <max-time value="5.0"/>
       <time-window-size value="1"/>
       <max-iterations value="100"/>
-      <exchange data="temperature loads" mesh="dirichlet-mesh" from="dirichlet" to="neumann" />
+      <exchange data="temperature flux 1" mesh="dirichlet-mesh" from="dirichlet" to="neumann" />
       <exchange data="temperature" mesh="neumann-mesh" from="neumann" to="dirichlet" initialize="true"/>
-      <relative-convergence-measure data="temperature loads" mesh="dirichlet-mesh" limit="1e-5"/>
+      <relative-convergence-measure data="temperature flux 1" mesh="dirichlet-mesh" limit="1e-5"/>
       <relative-convergence-measure data="temperature" mesh="neumann-mesh" limit="1e-5"/>
       <acceleration:IQN-ILS>
         <data name="temperature" mesh="neumann-mesh"/>
