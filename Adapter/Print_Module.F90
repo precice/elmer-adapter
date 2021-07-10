@@ -251,8 +251,10 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
     commsize = 1
     !--------------------------Initialize-End-------------------------------------------
    
-    !----Dirichlet
-    vertecies = (/2,13,14,15,16,17,18,19,20,4/)
+    !--Dirichlet
+    !vertecies = (/2,13,14,15,16,17,18,19,20,4/)
+    !--Neumann
+    vertecies = (/1,36,35,34,33,32,31,30,29,3/)
     !--Ref
     !vertecies = (/2,119,120,121,122,123,124,125,126,5/)
     ! CALL Info('CouplerSolver','Enter Key To Continue')

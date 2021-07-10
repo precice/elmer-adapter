@@ -31,3 +31,9 @@ gmsh <FileName>.geo and follow the following tutorial https://www.youtube.com/wa
 * Step 2    : Run Simulation, type ElmerSolver Dirichlet_Participant.sif and wait for simulation to finish
 * Step 3    : visulaize results, results should exist in Results folder, run paraview and open .vtu files to se solution
 * Hint      : Results in other examples not necessarily exist in Results folder, the location can be modified in .sif file
+
+# Running Neumann Example
+* Step 1    : Generate msh Files, type ElmerGrid 14 2 Neumann_Participant.msh -out Neumann_Participant_Mesh
+* Step 2    : Run Simulation, type ElmerSolver Dirichlet_Participant.sif and wait for simulation to finish
+* Step 3    : visulaize results, results should exist in Results folder, run paraview and open .vtu files to se solution
+* Hint      : Results in other examples not necessarily exist in Results folder, the location can be modified in .sif file
