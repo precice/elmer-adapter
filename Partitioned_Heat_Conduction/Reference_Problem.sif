@@ -1,8 +1,8 @@
 Header
   CHECK KEYWORDS Warn
-  Mesh DB "." "Reference_Problem_grid"
+  Mesh DB "." "Reference_Problem_Mesh"
   Include Path ""
-  Results Directory "Results"
+  Results Directory "out"
 End
 
 Simulation
