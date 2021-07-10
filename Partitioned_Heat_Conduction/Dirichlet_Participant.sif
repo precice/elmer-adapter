@@ -14,7 +14,7 @@ Simulation
   Output Intervals = 1
   Timestepping Method = BDF
   BDF Order = 2
-  Timestep intervals = 10
+  Timestep intervals = 30
   Timestep Sizes = 0.1
   Solver Input File = case.sif
   Post File = Dirichlet.vtu
@@ -151,7 +151,8 @@ End
 Boundary Condition 2
   Target Boundaries(1) = 2 
   Name = "Dirichlet_Coupling"
-  Temperature = Variable Time,Coordinate
-        Real MATC "1.3 * tx(0) + 1 + (tx(1)^2) + (3 * (tx(2) ^ 2))"
+  Temperature = Equals "Temperature"
+  !Temperature = Variable Time,Coordinate
+  !      Real MATC "1.3 * tx(0) + 1 + (tx(1)^2) + (3 * (tx(2) ^ 2))"
   Coupler Interface = Logical True
 End
