@@ -17,7 +17,7 @@ Simulation
   Timestep intervals = 10
   Timestep Sizes = 0.1
   Solver Input File = case.sif
-  Post File = case.vtu
+  Post File = Reference_Problem.vtu
 End
 
 Constants

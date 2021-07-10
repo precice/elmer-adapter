@@ -1,6 +1,6 @@
 Header
   CHECK KEYWORDS Warn
-  Mesh DB "." "Dirichlet_Participant"
+  Mesh DB "." "Dirichlet_Participant_Mesh"
   Include Path ""
   Results Directory "out"
 End
@@ -70,9 +70,32 @@ Solver 1
   Linear System Precondition Recompute = 1
 End
 
+Solver 2
+ Exec Solver = after timestep
+ Equation = "flux compute"
+ Procedure = "FluxSolver" "FluxSolver"
+ Calculate Flux = Logical True
+ Flux Variable = String Temperature
+ Flux Coefficient = String "Heat Conductivity"
+ Linear System Solver = "Iterative"
+ Linear System Iterative Method = "cg"
+ Linear System Preconditioning = ILU0
+ Linear System Residual Output = 10
+ Linear System Max Iterations = Integer 500
+ Linear System Convergence Tolerance = 1.0e-10
+End
+
+Solver 3
+  Equation = "Initialize"
+  Procedure = "../Adapter/Print_Module.so" "CouplerSolver"
+  readDataName = String "Temperature"
+  writeDataName = String "temperature loads"
+  Exec Solver = after timestep
+End
+
 Equation 1
   Name = "Heat_Plate"
-  Active Solvers(1) = 1 
+  Active Solvers(2) = 1 2
 End
 
 Material 1

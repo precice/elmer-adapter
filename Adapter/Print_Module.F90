@@ -228,7 +228,7 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
     INTEGER                         :: ongoing
     !--------------------------Variables-End-------------------------------------------
 
-    integer, dimension (11) :: vertecies
+    integer, dimension (10) :: vertecies
 
     !--------------------------SAVE-Start-------------------------------------------
     SAVE meshID,readDataID,writeDataID
@@ -250,12 +250,11 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
     rank = 0
     commsize = 1
     !--------------------------Initialize-End-------------------------------------------
+   
     !----Dirichlet
-    ! vertecies = (/3,22,21,20,19,18,17,16,15,14,4/)
-    ! vertecies = (/2,32,33,34,35,36,37,38,39,40,1/)
-    !----Neumann
-    vertecies = (/4,32,33,34,35,36,37,38,39,40,1/)
-    
+    vertecies = (/2,13,14,15,16,17,18,19,20,4/)
+    !--Ref
+    !vertecies = (/2,119,120,121,122,123,124,125,126,5/)
     ! CALL Info('CouplerSolver','Enter Key To Continue')
     ! read(*,*)
 
@@ -388,80 +387,25 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
         
 
         itask = 3
-    case(3)
-        !-------------------Copy Write values from Variable to buffer---------------------
-        
-        CALL Info('CouplerSolver','Copy Write Data to Variable')
-        CALL CopyWriteData(writeDataName,mesh,BCPerm,writeData)
-
-        CALL Info('CouplerSolver','Writing Data')
-        CALL precicef_write_bsdata(writeDataID, vertexSize, vertexIDs, writeData)
-
-        CALL Info('CouplerSolver','Printing write Data')
-        CALL Print(writeDataName,mesh ,BCPerm,CoordVals)
-        
-        CALL Info('CouplerSolver','Printing read Data')
-        CALL Print(readDataName,mesh ,BCPerm,CoordVals)
-
-        !--------------------Advance time loop---------------------------------------
-        CALL precicef_advance(dt)
-
-        CALL precicef_action_read_iter_checkp(readItCheckp)
-        CALL precicef_is_action_required(readItCheckp, bool)
-        
-
-        TimeVar => VariableGet( Solver % Mesh % Variables, "Time" )
-        Time = TimeVar % Values(2)
-        write(infoMessage,'(A,F10.4)') "TimeStep",Time
-        CALL Info('CouplerSolver',infoMessage)  
-        TimeVar % Values(1) = 1
-        IF (bool.EQ.1) THEN
-         
-          write(infoMessage,'(A,I2)') readItCheckp,bool
-          CALL Info('CouplerSolver',infoMessage)  
-          CALL Info('CouplerSolver','Reading iteration checkpoint')
-          CALL precicef_mark_action_fulfilled(readItCheckp)
-        ENDIF
-
-        
-
-        CALL precicef_is_coupling_ongoing(ongoing)
-
-        IF(ongoing.EQ.0) THEN
-            itask = 4
-        ELSE
-            itask = 2
-        END IF
           
-    case(4)    
-        !----------------------------------------Finailize--------------------------------------
-        CALL Info('CouplerSolver','Precice Finalize')
-        CALL precicef_finalize()
-
     case(5)
         ! CALL PrintDomain('temperature loads',mesh)
         CALL Info('CouplerSolver','Printing Temperature')
         readDataVariable  => VariableGet( mesh % Variables, 'temperature ')
-        DO i = 1, 11
+        DO i = 1, 10
             
-            
-            write(infoMessage,'(A,I5,A,F10.4)') 'Node: ',vertecies(i),' Value: ', &
-                        readDataVariable % Values(readDataVariable % Perm(vertecies(i)))
-                          
-            CALL Info('CouplerSolver',infoMessage)
-            
+            Print *, 'Node: ',vertecies(i),' Value: ' &
+                   ,readDataVariable % Values(readDataVariable % Perm(vertecies(i))) &
+                   , model % Nodes % x(vertecies(i)), model % Nodes % y(vertecies(i))         
         END DO
 
         CALL Info('CouplerSolver','Printing temperature flux 1')
         readDataVariable  => VariableGet( mesh % Variables, 'temperature flux 1')
-        DO i = 1, 11
+        DO i = 1, 10
             
-            
-            write(infoMessage,'(A,I5,A,F10.4)') 'Node: ',vertecies(i),' Value: ', &
-                        readDataVariable % Values(readDataVariable % Perm(vertecies(i)))
-                          
-            CALL Info('CouplerSolver',infoMessage)
-            
+            Print *, 'Node: ',vertecies(i),' Value: ' &
+                   ,readDataVariable % Values(readDataVariable % Perm(vertecies(i))) &
+                   , model % Nodes % x(vertecies(i)), model % Nodes % y(vertecies(i))
         END DO
     end select
 
