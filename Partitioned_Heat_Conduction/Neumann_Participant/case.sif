@@ -87,7 +87,7 @@ End
 
 Solver 3
     Equation = "Initialize"
-    Procedure = "../../Adapter/Coupler_Solver.so" "CouplerSolver"
+    Procedure = "../Coupler_Solver.so" "CouplerSolver"
     readDataName = String "temperature flux 1"
     writeDataName = String "Temperature"
     Exec Solver = before all
@@ -95,7 +95,7 @@ End
 
 Solver 4
     Equation = "ReadData"
-    Procedure = "../../Adapter/Coupler_Solver.so" "CouplerSolver"
+    Procedure = "../Coupler_Solver.so" "CouplerSolver"
     readDataName = String "temperature flux 1"
     writeDataName = String "Temperature"
     Exec Solver = before timestep 
@@ -103,7 +103,7 @@ End
 
 Solver 5
     Equation = "writeDataAdvance"
-    Procedure = "../../Adapter/Coupler_Solver.so" "CouplerSolver"
+    Procedure = "../Coupler_Solver.so" "CouplerSolver"
     readDataName = String "temperature flux 1"
     writeDataName = String "Temperature"
     Exec Solver = after timestep 
@@ -111,7 +111,7 @@ End
 
 Solver 6
     Equation = "Finalize"
-    Procedure = "../../Adapter/Coupler_Solver.so" "CouplerSolver"
+    Procedure = "../Coupler_Solver.so" "CouplerSolver"
     readDataName = String "temperature flux 1"
     writeDataName = String "Temperature"
     Exec Solver = after all 
