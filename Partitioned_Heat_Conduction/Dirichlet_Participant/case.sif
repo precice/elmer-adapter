@@ -1,8 +1,8 @@
 Header
   CHECK KEYWORDS Warn
-  Mesh DB "." "Dirichlet_Participant"
+  Mesh DB "." "Dirichlet_Participant_Mesh"
   Include Path ""
-  Results Directory "Results"
+  Results Directory "../out"
 End
 
 Simulation
@@ -17,7 +17,7 @@ Simulation
   Timestep intervals = 10
   Timestep Sizes = 0.1
   Solver Input File = case.sif
-  Post File = case.vtu
+  Post File = Dirichlet.vtu
 
   maskName = String "Coupler Interface"
   participantName = String "Dirichlet"
