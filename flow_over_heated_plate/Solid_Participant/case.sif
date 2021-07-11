@@ -85,6 +85,38 @@ Solver 2
  Linear System Convergence Tolerance = 1.0e-10
 End
 
+Solver 3
+    Equation = "Initialize"
+    Procedure = "../Coupler_Solver.so" "CouplerSolver"
+    readDataName = String "Temperature"
+    writeDataName = String "temperature flux 2"
+    Exec Solver = before all
+End
+
+Solver 4
+    Equation = "ReadData"
+    Procedure = "../Coupler_Solver.so" "CouplerSolver"
+    readDataName = String "Temperature"
+    writeDataName = String "temperature flux 2"
+    Exec Solver = before timestep 
+End
+
+Solver 5
+    Equation = "WriteDataAdvance"
+    Procedure = "../Coupler_Solver.so" "CouplerSolver"
+    readDataName = String "Temperature"
+    writeDataName = String "temperature flux 2"
+    Exec Solver = after timestep 
+End
+
+Solver 6
+    Equation = "Finalize"
+    Procedure = "../Coupler_Solver.so" "CouplerSolver"
+    readDataName = String "Temperature"
+    writeDataName = String "temperature flux 2"
+    Exec Solver = after all 
+End
+
 Equation 1
   Name = "Heat_Plate"
   Active Solvers(2) = 1 2
