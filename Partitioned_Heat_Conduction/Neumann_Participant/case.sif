@@ -137,13 +137,14 @@ End
 Body Force 1
   Name = "BodyForce 1"
   !Heat Source = -6
-  Heat Source = Real MATC "1.2-2 - 2*3"
+  Heat Source = Real MATC "1.3-2 - 2*3"
 End
 
 Boundary Condition 1
-  Target Boundaries(1) = 1 
+  Target Boundaries(1) = 2 
   Name = "Neumann_Coupling"
-  Temperature Load = Equals "temperature loads"
+  Heat Flux = Equals "temperature flux 1"
+  !Temperature Load = Equals "temperature loads"
   !Temperature Load = Variable Coordinate 2
   !             Real Procedure "UDF_Boundary" "SetLoads"
   !Temperature = Variable Coordinate
@@ -152,8 +153,8 @@ Boundary Condition 1
 End
 
 Boundary Condition 2
-  Target Boundaries(1) = 2 
+  Target Boundaries(1) = 1 
   Name = "Plate_Boundary"
-  Temperature = Variable Coordinate
-        Real MATC "1 + (tx(0)^2) + (3 * (tx(1) ^ 2)) + 1.2 * tx(2)"
+  Temperature = Variable Time,Coordinate
+        Real MATC "1.3 * tx(0) + 1 + (tx(1)^2) + (3 * (tx(2) ^ 2))"
 End

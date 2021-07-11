@@ -34,7 +34,7 @@ Constants
 End
 
 Body 1
-  Target Bodies(1) = 1
+  Target Bodies(1) = 3
   Name = "Body 1"
   Equation = 1
   Material = 1
@@ -139,15 +139,15 @@ End
 Body Force 1
   Name = "BodyForce 1"
   !Heat Source = -6
-  Heat Source = Real MATC "1.2-2 - 2*3"
+  Heat Source = Real MATC "1.3-2 - 2*3"
 End
 
 
 Boundary Condition 1
-  Target Boundaries(1) = 3 
+  Target Boundaries(1) = 1 
   Name = "Plate_Boundary"
-  Temperature = Variable Coordinate,Time
-        Real MATC "1 + (tx(0)^2) + (3 * (tx(1) ^ 2)) + 1.2 * tx(2)"
+  Temperature = Variable Time,Coordinate
+        Real MATC "1.3 * tx(0) + 1 + (tx(1)^2) + (3 * (tx(2) ^ 2))"
 End
 
 Boundary Condition 2
