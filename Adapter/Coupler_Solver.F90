@@ -329,8 +329,7 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
         writeItCheckp(1:50)='                                                  '
 
         CALL precicef_get_dims(dimensions)
-        ! CALL precicef_get_mesh_id(meshName, meshID)
-        CALL precicef_get_mesh_id("dirichlet-mesh", meshID)
+        CALL precicef_get_mesh_id(meshName, meshID)
         CALL precicef_set_vertices(meshID, vertexSize, CoordVals, vertexIDs)
 
         CALL precicef_get_data_id(readDataName,meshID,readDataID)
@@ -362,7 +361,7 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
         CALL precicef_is_coupling_ongoing(ongoing)
         
 
-        itask = 5
+        itask = 2
     case(2)
 
         CALL precicef_action_write_iter_checkp(writeItCheckp)
@@ -413,11 +412,7 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
         CALL precicef_is_action_required(readItCheckp, bool)
         
 
-        TimeVar => VariableGet( Solver % Mesh % Variables, "Time" )
-        Time = TimeVar % Values(2)
-        write(infoMessage,'(A,F10.4)') "TimeStep",Time
-        CALL Info('CouplerSolver',infoMessage)  
-        TimeVar % Values(1) = 1
+        
         IF (bool.EQ.1) THEN
          
           write(infoMessage,'(A,I2)') readItCheckp,bool
