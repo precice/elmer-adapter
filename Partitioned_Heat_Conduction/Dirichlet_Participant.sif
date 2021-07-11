@@ -13,8 +13,8 @@ Simulation
   Steady State Max Iterations = 10
   Output Intervals = 1
   Timestepping Method = BDF
-  BDF Order = 2
-  Timestep intervals = 30
+  BDF Order = 5
+  Timestep intervals = 10
   Timestep Sizes = 0.1
   Solver Input File = case.sif
   Post File = Dirichlet.vtu
@@ -87,7 +87,7 @@ End
 
 Solver 3
   Equation = "Initialize"
-  Procedure = "../Adapter/Coupler_Solver.so" "CouplerSolver"
+  Procedure = "Coupler_Solver.so" "CouplerSolver"
   readDataName = String "Temperature"
   writeDataName = String "temperature flux 1"
   Exec Solver = before all
@@ -95,7 +95,7 @@ End
 
 Solver 4
     Equation = "ReadData"
-    Procedure = "../Adapter/Coupler_Solver.so" "CouplerSolver"
+    Procedure = "Coupler_Solver.so" "CouplerSolver"
     readDataName = String "Temperature"
     writeDataName = String "temperature flux 1"
     Exec Solver = before timestep 
@@ -103,7 +103,7 @@ End
 
 Solver 5
     Equation = "WriteDataAdvance"
-    Procedure = "../Adapter/Coupler_Solver.so" "CouplerSolver"
+    Procedure = "Coupler_Solver.so" "CouplerSolver"
     readDataName = String "Temperature"
     writeDataName = String "temperature flux 1"
     Exec Solver = after timestep 
@@ -111,11 +111,12 @@ End
 
 Solver 6
     Equation = "Finalize"
-    Procedure = "../Adapter/Coupler_Solver.so" "CouplerSolver"
+    Procedure = "Coupler_Solver.so" "CouplerSolver"
     readDataName = String "Temperature"
     writeDataName = String "temperature flux 1"
     Exec Solver = after all 
 End
+
 
 Equation 1
   Name = "Heat_Plate"
@@ -151,8 +152,7 @@ End
 Boundary Condition 2
   Target Boundaries(1) = 2 
   Name = "Dirichlet_Coupling"
-  Temperature = Equals "Temperature"
-  !Temperature = Variable Time,Coordinate
-  !      Real MATC "1.3 * tx(0) + 1 + (tx(1)^2) + (3 * (tx(2) ^ 2))"
+  Temperature = Variable Time,Coordinate
+        Real MATC "1.3 * tx(0) + 1 + (tx(1)^2) + (3 * (tx(2) ^ 2))"
   Coupler Interface = Logical True
 End
