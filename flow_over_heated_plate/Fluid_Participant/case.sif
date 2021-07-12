@@ -1,6 +1,6 @@
 Header
   CHECK KEYWORDS Warn
-  Mesh DB "." "Solid_Participant_Mesh"
+  Mesh DB "." "Fluid_Participant_Mesh"
   Include Path ""
   Results Directory "../out"
 End
@@ -10,18 +10,18 @@ Simulation
   Coordinate System = Cartesian
   Coordinate Mapping(3) = 1 2 3
   Simulation Type = Transient
-  Steady State Max Iterations = 10
+  Steady State Max Iterations = 3
   Output Intervals = 1
   Timestepping Method = BDF
   BDF Order = 2
   Timestep intervals = 10
   Timestep Sizes = 0.1
   Solver Input File = case.sif
-  Post File = Solid.vtu
+  Post File = Fluid.vtu
 
   maskName = String "Coupler Interface"
-  participantName = String "Solid"
-  meshName = String "Solid-Mesh"
+  participantName = String "Fluid"
+  meshName = String "Fluid-Mesh"
   configPath = String "../precice-config.xml" 
 End
 
@@ -34,7 +34,7 @@ Constants
 End
 
 Body 1
-  Target Bodies(1) = 4
+  Target Bodies(1) = 1
   Name = "Body 1"
   Equation = 1
   Material = 1
@@ -43,10 +43,37 @@ Body 1
 End
 
 Solver 1
+  Equation = Navier-Stokes
+  Procedure = "FlowSolve" "FlowSolver"
+  Variable = Flow Solution[Velocity:2 Pressure:1]
+  Exec Solver = Always
+  Stabilize = True
+  Bubbles = False
+  Lumped Mass Matrix = False
+  Optimize Bandwidth = True
+  Steady State Convergence Tolerance = 1.0e-5
+  Nonlinear System Convergence Tolerance = 1.0e-7
+  Nonlinear System Max Iterations = 5
+  Nonlinear System Newton After Iterations = 3
+  Nonlinear System Newton After Tolerance = 1.0e-3
+  Nonlinear System Relaxation Factor = 1
+  Linear System Solver = Iterative
+  Linear System Iterative Method = BiCGStab
+  Linear System Max Iterations = 500
+  Linear System Convergence Tolerance = 1.0e-10
+  BiCGstabl polynomial degree = 2
+  Linear System Preconditioning = ILU0
+  Linear System ILUT Tolerance = 1.0e-3
+  Linear System Abort Not Converged = False
+  Linear System Residual Output = 10
+  Linear System Precondition Recompute = 1
+End
+
+Solver 2
   Equation = Heat Equation
   Procedure = "HeatSolve" "HeatSolver"
-  Calculate Loads = Logical True
   Variable = Temperature
+  Calculate Loads = Logical True
   Exec Solver = Always
   Stabilize = True
   Bubbles = False
@@ -70,7 +97,7 @@ Solver 1
   Linear System Precondition Recompute = 1
 End
 
-Solver 2
+Solver 3
  Exec Solver = after timestep
  Equation = "flux compute"
  Procedure = "FluxSolver" "FluxSolver"
@@ -85,70 +112,59 @@ Solver 2
  Linear System Convergence Tolerance = 1.0e-10
 End
 
-Solver 3
-    Equation = "Initialize"
-    Procedure = "../Coupler_Solver.so" "CouplerSolver"
-    readDataName = String "Temperature"
-    writeDataName = String "temperature flux 2"
-    Exec Solver = before all
-End
-
-Solver 4
-    Equation = "ReadData"
-    Procedure = "../Coupler_Solver.so" "CouplerSolver"
-    readDataName = String "Temperature"
-    writeDataName = String "temperature flux 2"
-    Exec Solver = before timestep 
-End
-
-Solver 5
-    Equation = "WriteDataAdvance"
-    Procedure = "../Coupler_Solver.so" "CouplerSolver"
-    readDataName = String "Temperature"
-    writeDataName = String "temperature flux 2"
-    Exec Solver = after timestep 
-End
-
-Solver 6
-    Equation = "Finalize"
-    Procedure = "../Coupler_Solver.so" "CouplerSolver"
-    readDataName = String "Temperature"
-    writeDataName = String "temperature flux 2"
-    Exec Solver = after all 
-End
-
 Equation 1
-  Name = "Heat_Plate"
-  Active Solvers(2) = 1 2
+  Name = "Navier_Stokes_Heat"
+  Convection = Computed
+  Active Solvers(3) =  1 2 3
 End
 
 Material 1
-  Name = "PlateMaterial"
+  Name = "Fluid"
   Heat Conductivity = 100
   Heat Capacity = 5000
-  Density = 0.02
+  Reference Temperature = 300
+  Viscosity = 0.0002
+  Heat Conductivity = 0.58
+  Heat expansion Coefficient = 0.207e-3
+  Density = 0.002
+End
+
+Body Force 1
+  Name = "buoyancy"
+  Boussinesq = True
 End
 
 Initial Condition 1
-    Name = "Temp_Init"
-    Temperature = 300
+  Name = "liquid_Initial_Condition"
+  Velocity 2 = 0.0
+  Velocity 1 = 0.0
+  Temperature = 300
 End
 
 Boundary Condition 1
-  Target Boundaries(1) = 1
-  Name = "Plate_Bottom"
-  Temperature = 310
+  Target Boundaries(1) = 5 
+  Name = "Fluid_Walls"
+  Noslip wall BC = True 
 End
 
 Boundary Condition 2
   Target Boundaries(1) = 2 
-  Name = "Plate_Sides"
-  Heat Flux = 0
+  Name = "Inlet"
+  Velocity 1 = 0.1
+  Temperature = 300
 End
 
 Boundary Condition 3
-  Target Boundaries(1) = 3
-  Name = "Coupling Interface"
-  Temperature = 300
-  Coupler Interface = Logical True
+  Target Boundaries(1) = 3 
+  Name = "Outlet"
+  Velocity 2 = 0.0
+End
+
+Boundary Condition 4
+  Target Boundaries(1) = 4
+  Name = "Coupling_boundary"
+  Noslip wall BC = True
+  Temperature = 310
+  !Heat Flux = 1
+  Coupler Interface = Logical True 
 End
