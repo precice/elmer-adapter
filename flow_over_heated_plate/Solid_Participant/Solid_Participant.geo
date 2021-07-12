@@ -26,8 +26,8 @@ Physical Line("Coupling_Interface") = {3};
 //+
 Transfinite Surface {1} = {2, 4, 3, 1};
 //+
-Transfinite Line {4, 2} = 25 Using Progression 1;
+Transfinite Line {4, 2} = 10 Using Progression 1;
 //+
-Transfinite Line {1, 3} = 100 Using Progression 1;
+Transfinite Line {1, 3} = 10 Using Progression 1;
 //+
 Physical Surface("Plate") = {1};

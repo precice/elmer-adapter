@@ -47,8 +47,8 @@ Physical Line("Pipe_Boundary") = {1, 7, 6, 5, 3};
 //+
 Transfinite Surface {1} = {5, 7, 8, 6};
 //+
-Transfinite Line {8, 4, 1, 7} = 50 Using Progression 1;
+Transfinite Line {8, 4, 1, 7} = 5 Using Progression 1;
 //+
-Transfinite Line {2, 6} = 100 Using Progression 1;
+Transfinite Line {2, 6} = 10 Using Progression 1;
 //+
-Transfinite Line {3, 5} = 200 Using Progression 1;
+Transfinite Line {3, 5} = 20 Using Progression 1;

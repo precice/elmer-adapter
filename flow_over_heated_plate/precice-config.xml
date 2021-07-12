@@ -9,22 +9,22 @@
   <solver-interface dimensions="2">
 
     <data:scalar name="temperature"/>
-    <data:scalar name="temperature flux 2"/>
+    <data:scalar name="temperature flux 1"/>
 
     <mesh name="solid-mesh">
       <use-data name="temperature"/>
-      <use-data name="temperature flux 2"/>
+      <use-data name="temperature flux 1"/>
     </mesh>
 
     <mesh name="fluid-mesh">
       <use-data name="temperature"/>
-      <use-data name="temperature flux 2"/>
+      <use-data name="temperature flux 1"/>
     </mesh>
 
     <participant name="solid">
       <use-mesh name="solid-mesh" provide="yes"/>
       <use-mesh name="fluid-mesh" from="fluid"/>
-      <write-data name="temperature flux 2" mesh="solid-mesh"/>
+      <write-data name="temperature flux 1" mesh="solid-mesh"/>
       <read-data name="temperature" mesh="solid-mesh"/>
       <mapping:nearest-neighbor
         direction="read"
@@ -38,7 +38,7 @@
       <use-mesh name="fluid-mesh" provide="yes"/>
       <use-mesh name="solid-mesh" from="solid"/>
       <write-data name="temperature" mesh="fluid-mesh"/>
-      <read-data name="temperature flux 2" mesh="fluid-mesh"/>
+      <read-data name="temperature flux 1" mesh="fluid-mesh"/>
       <mapping:nearest-neighbor
         direction="read"
         from="solid-mesh"
@@ -56,7 +56,7 @@
       <!-- <max-time-windows value="3"/> 
       <time-window-size value="1" valid-digits="10" method="fixed"/>  -->
       <time-window-size value="0.1"/>
-      <exchange data="temperature flux 2" mesh="solid-mesh" from="solid" to="fluid" />
+      <exchange data="temperature flux 1" mesh="solid-mesh" from="solid" to="fluid" />
       <exchange data="temperature" mesh="fluid-mesh" from="fluid" to="solid" initialize="yes" />
     </coupling-scheme:serial-explicit>
 

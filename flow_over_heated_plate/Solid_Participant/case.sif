@@ -89,7 +89,7 @@ Solver 3
     Equation = "Initialize"
     Procedure = "../Coupler_Solver.so" "CouplerSolver"
     readDataName = String "Temperature"
-    writeDataName = String "temperature flux 2"
+    writeDataName = String "temperature flux 1"
     Exec Solver = before all
 End
 
@@ -149,6 +149,7 @@ End
 Boundary Condition 3
   Target Boundaries(1) = 3
   Name = "Coupling Interface"
-  Temperature = 300
+  Temperature = Equals "Temperature"
+  !Temperature = 300
   Coupler Interface = Logical True
 End

@@ -228,7 +228,7 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
     INTEGER                         :: ongoing
     !--------------------------Variables-End-------------------------------------------
 
-    integer, dimension (11) :: vertecies
+    integer, dimension (10) :: vertecies
 
     !--------------------------SAVE-Start-------------------------------------------
     SAVE meshID,readDataID,writeDataID
@@ -250,14 +250,12 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
     rank = 0
     commsize = 1
     !--------------------------Initialize-End-------------------------------------------
-    !----Dirichlet
-    ! vertecies = (/3,22,21,20,19,18,17,16,15,14,4/)
-    ! vertecies = (/2,32,33,34,35,36,37,38,39,40,1/)
-    !----Neumann
-    vertecies = (/4,32,33,34,35,36,37,38,39,40,1/)
-    
-    ! CALL Info('CouplerSolver','Enter Key To Continue')
-    ! read(*,*)
+    !--Solid
+    !vertecies = (/1,28,27,26,25,24,23,22,21,3/)
+    !--Fluid
+    vertecies = (/1,12,13,14,15,16,17,18,19,2/)
+    CALL Info('CouplerSolver','Enter Key To Continue')
+    read(*,*)
 
     writeInitialData(1:50)='                                                  '
     readItCheckp(1:50)='                                                  '
@@ -441,7 +439,7 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
         ! CALL PrintDomain('temperature loads',mesh)
         CALL Info('CouplerSolver','Printing Temperature')
         readDataVariable  => VariableGet( mesh % Variables, 'temperature ')
-        DO i = 1, 11
+        DO i = 1, 10
             
             
             write(infoMessage,'(A,I5,A,F10.4)') 'Node: ',vertecies(i),' Value: ', &
@@ -451,9 +449,9 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
             
         END DO
 
-        CALL Info('CouplerSolver','Printing temperature loads')
-        readDataVariable  => VariableGet( mesh % Variables, 'temperature loads')
-        DO i = 1, 11
+        CALL Info('CouplerSolver','Printing temperature flux 2')
+        readDataVariable  => VariableGet( mesh % Variables, 'temperature flux 2')
+        DO i = 1, 10
             
             
             write(infoMessage,'(A,I5,A,F10.4)') 'Node: ',vertecies(i),' Value: ', &
