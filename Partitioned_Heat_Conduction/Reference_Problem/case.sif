@@ -1,8 +1,8 @@
 Header
   CHECK KEYWORDS Warn
-  Mesh DB "." "Reference_Problem"
+  Mesh DB "." "Reference_Problem_Mesh"
   Include Path ""
-  Results Directory "Results"
+  Results Directory "../out"
 End
 
 Simulation
@@ -15,9 +15,9 @@ Simulation
   Timestepping Method = BDF
   BDF Order = 5
   Timestep intervals = 10
-  Timestep Sizes = 1
+  Timestep Sizes = 0.1
   Solver Input File = case.sif
-  Post File = case.vtu
+  Post File = Reference_Problem.vtu
 End
 
 Constants
@@ -34,11 +34,13 @@ Body 1
   Equation = 1
   Material = 1
   Body Force = 1
+  Initial Condition = 1
 End
 
 Solver 1
   Equation = Heat Equation
   Procedure = "HeatSolve" "HeatSolver"
+  Calculate Loads = Logical True
   Variable = Temperature
   Exec Solver = Always
   Stabilize = True
@@ -63,9 +65,32 @@ Solver 1
   Linear System Precondition Recompute = 1
 End
 
+Solver 2
+ Exec Solver = after timestep
+ Equation = "flux compute"
+ Procedure = "FluxSolver" "FluxSolver"
+ Calculate Flux = Logical True
+ Flux Variable = String Temperature
+ Flux Coefficient = String "Heat Conductivity"
+ Linear System Solver = "Iterative"
+ Linear System Iterative Method = "cg"
+ Linear System Preconditioning = ILU0
+ Linear System Residual Output = 10
+ Linear System Max Iterations = Integer 500
+ Linear System Convergence Tolerance = 1.0e-10
+End
+
+!Solver 3
+!  Equation = "Initialize"
+!  Procedure = "../Adapter/Print_Module.so" "CouplerSolver"
+!  readDataName = String "Temperature"
+!  writeDataName = String "temperature loads"
+!  Exec Solver = after timestep
+!End
+
 Equation 1
   Name = "Heat_Plate"
-  Active Solvers(1) = 1
+  Active Solvers(2) = 1 2
 End
 
 Material 1
@@ -74,14 +99,21 @@ Material 1
   Density = 1.0
 End
 
+Initial Condition 1
+  Name = "Temp_Init"
+  Temperature  = Variable Coordinate
+               Real MATC "1 + (tx(0)^2) + (3 * (tx(1) ^ 2))"
+End
+
 Body Force 1
   Name = "BodyForce 1"
-  Heat Source = -6
+  !Heat Source = -6
+  Heat Source = Real MATC "1.3-2 - 2*3"
 End
 
 Boundary Condition 1
   Target Boundaries(1) = 1 
   Name = "Plate_Boundary"
-  Temperature = Variable Coordinate
-        Real MATC "1 + (tx(0)^2) + (2 * (tx(1) ^ 2))"
+  Temperature = Variable Time,Coordinate
+        Real MATC "1.3 * tx(0) + 1 + (tx(1)^2) + (3 * (tx(2) ^ 2))"
 End
