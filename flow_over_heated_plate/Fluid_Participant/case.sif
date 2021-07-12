@@ -96,53 +96,53 @@ Solver 2
   Linear System Residual Output = 10
   Linear System Precondition Recompute = 1
 End
-!
-!Solver 3
-! Exec Solver = after timestep
-! Equation = "flux compute"
-! Procedure = "FluxSolver" "FluxSolver"
-! Calculate Flux = Logical True
-! Flux Variable = String Temperature
-! Flux Coefficient = String "Heat Conductivity"
-! Linear System Solver = "Iterative"
-! Linear System Iterative Method = "cg"
-! Linear System Preconditioning = ILU0
-! Linear System Residual Output = 10
-! Linear System Max Iterations = Integer 500
-! Linear System Convergence Tolerance = 1.0e-10
-!End
 
-!Solver 4
-!    Equation = "Initialize"
-!    Procedure = "../Coupler_Solver.so" "CouplerSolver"
-!    readDataName = String "temperature flux 1"
-!    writeDataName = String "Temperature"
-!    Exec Solver = before all
-!End
-!
-!Solver 5
-!    Equation = "ReadData"
-!    Procedure = "../Coupler_Solver.so" "CouplerSolver"
-!    readDataName = String "temperature flux 2"
-!    writeDataName = String "Temperature"
-!    Exec Solver = before timestep 
-!End
-!
-!Solver 6
-!    Equation = "WriteDataAdvance"
-!    Procedure = "../Coupler_Solver.so" "CouplerSolver"
-!    readDataName = String "temperature flux 2"
-!    writeDataName = String "Temperature"
-!    Exec Solver = after timestep 
-!End
-!
-!Solver 7
-!    Equation = "Finalize"
-!    Procedure = "../Coupler_Solver.so" "CouplerSolver"
-!    readDataName = String "temperature flux 2"
-!    writeDataName = String "Temperature"
-!    Exec Solver = after all 
-!End
+Solver 3
+ Exec Solver = after timestep
+ Equation = "flux compute"
+ Procedure = "FluxSolver" "FluxSolver"
+ Calculate Flux = Logical True
+ Flux Variable = String Temperature
+ Flux Coefficient = String "Heat Conductivity"
+ Linear System Solver = "Iterative"
+ Linear System Iterative Method = "cg"
+ Linear System Preconditioning = ILU0
+ Linear System Residual Output = 10
+ Linear System Max Iterations = Integer 500
+ Linear System Convergence Tolerance = 1.0e-10
+End
+
+Solver 4
+    Equation = "Initialize"
+    Procedure = "../Coupler_Solver.so" "CouplerSolver"
+    readDataName = String "temperature flux 2"
+    writeDataName = String "Temperature"
+    Exec Solver = before all
+End
+
+Solver 5
+    Equation = "ReadData"
+    Procedure = "../Coupler_Solver.so" "CouplerSolver"
+    readDataName = String "temperature flux 2"
+    writeDataName = String "Temperature"
+    Exec Solver = before timestep 
+End
+
+Solver 6
+    Equation = "WriteDataAdvance"
+    Procedure = "../Coupler_Solver.so" "CouplerSolver"
+    readDataName = String "temperature flux 2"
+    writeDataName = String "Temperature"
+    Exec Solver = after timestep 
+End
+
+Solver 7
+    Equation = "Finalize"
+    Procedure = "../Coupler_Solver.so" "CouplerSolver"
+    readDataName = String "temperature flux 2"
+    writeDataName = String "Temperature"
+    Exec Solver = after all 
+End
 
 Equation 1
   Name = "Navier_Stokes_Heat"
@@ -155,10 +155,7 @@ Material 1
   Heat Conductivity = 100
   Heat Capacity = 5000
   Viscosity = 0.0002
-  Reference Temperature = 300
-  !Heat expansion Coefficient = 0.207e-3
-  Heat Conductivity = 0.58
-  Density = 0.002
+  Density = 0.2
 End
 
 Body Force 1
@@ -168,8 +165,8 @@ End
 
 Initial Condition 1
   Name = "liquid_Initial_Condition"
-  Velocity 2 = 0.0
   Velocity 1 = 0.0
+  Velocity 2 = 0.0
   Temperature = 300
 End
 
@@ -196,8 +193,6 @@ Boundary Condition 4
   Target Boundaries(1) = 4
   Name = "Coupling_boundary"
   Noslip wall BC = True
-  Temperature = 310
-  !Heat Flux = Equals "temperature flux 2"
-  !Heat Flux = 4000
+  Heat Flux = Equals "temperature flux 2"
   Coupler Interface = Logical True 
 End

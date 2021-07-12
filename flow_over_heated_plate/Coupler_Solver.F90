@@ -186,7 +186,7 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
     !--------------------------MPI-Variables-------------------------------------
     INTEGER                         :: rank,commsize
     !--------------------------Precice-Control-------------------------------------
-    INTEGER                         :: itask = 5
+    INTEGER                         :: itask = 1
 
     !--------------------------Logic-Control-------------------------------------
     LOGICAL                             :: Found
@@ -253,9 +253,9 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
     !--Solid
     !vertecies = (/1,28,27,26,25,24,23,22,21,3/)
     !--Fluid
-    vertecies = (/1,12,13,14,15,16,17,18,19,2/)
-    CALL Info('CouplerSolver','Enter Key To Continue')
-    read(*,*)
+    vertecies = (/1,29,28,27,26,25,24,23,22,3/)
+    ! CALL Info('CouplerSolver','Enter Key To Continue')
+    ! read(*,*)
 
     writeInitialData(1:50)='                                                  '
     readItCheckp(1:50)='                                                  '
