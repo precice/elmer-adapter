@@ -21,7 +21,7 @@ These steps are required if the user want to regenerate the existing .msh file, 
 gmsh <FileName>.geo and follow the following tutorial https://www.youtube.com/watch?v=O1FyiBBuN98&ab_channel=JoshTheEngineer
 
 # Running Example
-* Step 1    : Generate msh Files, type ElmerGrid 14 2 Dirichlet_Participant.msh
+* Step 1    : Generate msh Files, type ElmerGrid 14 2 Dirichlet_Participant.msh -out Dirichlet_Participant_Mesh
 * Step 2    : Run Simulation, type ElmerSolver case.sif and wait for simulation to finish
 * Step 3    : visulaize results, results should exist in Results folder, run paraview and open .vtu files to se solution
 * Hint      : Results in other examples not necessarily exist in Results folder, the location can be modified in .sif file
