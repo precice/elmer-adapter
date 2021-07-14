@@ -14,9 +14,11 @@
 # ignoring precice log files
 *.log
 *.json
+*.pyc
 
 # ignoring specific sif file
 entities.sif
+venv
 
 # ignoring results directory
 Results/
