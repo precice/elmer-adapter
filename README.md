@@ -41,7 +41,11 @@ a directory with the name Results will be created, inside it the .vtu file
 can be found and visualized in paraview.
 
 # For Compiling user defined solver with precice
-elmerf90 -o Coupler_Solver Coupler_Solver.F90 /usr/lib/x86_64-linux-gnu/libprecice.so.2
+Elmer allows the user to define external solver that can be called by ElmerSolver during Runtime, so before coupling at runtime, the Fortran code
+developed by the user must be compiled, so Elmer provides a wrapper to compile FORTRAN ,to make sure the compilation is done using the same settings, and compiler which Elmer compiled with, the wrapper is elmerf90.To compile user define code
+`elmerf90 -o <Output File Name> <Fortran File>`
+So the adapter developed is in the form of user defined code and it has to be compiled with the wrapper, it also needs to be linked with preCICE library as follows
+`elmerf90 -o Coupler_Solver Coupler_Solver.F90 /usr/lib/x86_64-linux-gnu/libprecice.so.2`
 
 # Project description
 Elmer Multiphysics solver adapter for Precice coupling library.
