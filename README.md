@@ -1,11 +1,6 @@
 # elmer-adapter
 **experimental** preCICE-adapter for the open source multiphysical simulation software Elmer FEM
 
-# TODO
-* remove personal remind quotes
-* add result image for example problems
-* Complete required software and installation instructions
-
 # Required Software
 * libprecice2_2.2.1(libprecice2_2.2.1_bionic.deb), make sure to install compatible version with operating system, here bionic is used because i have ubuntu 18.04
 
