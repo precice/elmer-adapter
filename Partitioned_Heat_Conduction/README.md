@@ -27,19 +27,22 @@ To compile the adapter, type `elmerf90 -o Coupler_Solver.so Coupler_Solver.F90 /
 For locating the path of preCICE shared library, type `dpkg -L libprecice2`, this will list all the files related to prceCICE package, search for the path of the shared library, it should be located in `/usr/lib`
 
 # Running Reference Example
-* Step 1    : Generate msh Files, type ElmerGrid 14 2 Reference_Problem.msh -out Reference_Problem_Mesh
-* Step 2    : Run Simulation, type ElmerSolver Reference_Problem.sif and wait for simulation to finish
-* Step 3    : visulaize results, results should exist in Results folder, run paraview and open .vtu files to se solution
+* Step 1    : Go To Reference_Problem/
+* Step 2    : Generate msh Files, type ElmerGrid 14 2 Reference_Problem.msh -out Reference_Problem_Mesh
+* Step 3    : Run Simulation, type ElmerSolver Reference_Problem.sif and wait for simulation to finish
+* Step 4    : visulaize results, results should exist in Results folder, run paraview and open .vtu files to se solution
 * Hint      : Results in other examples not necessarily exist in Results folder, the location can be modified in .sif file
 
 # Running Dirichlet Example
-* Step 1    : Generate msh Files, type ElmerGrid 14 2 Dirichlet_Participant.msh -out Dirichlet_Participant_Mesh
-* Step 2    : Run Simulation, type ElmerSolver Dirichlet_Participant.sif and wait for simulation to finish
-* Step 3    : visulaize results, results should exist in Results folder, run paraview and open .vtu files to se solution
+* Step 1    : Go To Dirichlet_Participant/
+* Step 2    : Generate msh Files, type ElmerGrid 14 2 Dirichlet_Participant.msh -out Dirichlet_Participant_Mesh
+* Step 3    : Run Simulation, type ElmerSolver Dirichlet_Participant.sif and wait for simulation to finish
+* Step 4    : visulaize results, results should exist in Results folder, run paraview and open .vtu files to se solution
 * Hint      : Results in other examples not necessarily exist in Results folder, the location can be modified in .sif file
 
 # Running Neumann Example
-* Step 1    : Generate msh Files, type ElmerGrid 14 2 Neumann_Participant.msh -out Neumann_Participant_Mesh
-* Step 2    : Run Simulation, type ElmerSolver Dirichlet_Participant.sif and wait for simulation to finish
-* Step 3    : visulaize results, results should exist in Results folder, run paraview and open .vtu files to se solution
+* Step 1    : Go To Neumann_Participant/
+* Step 2    : Generate msh Files, type ElmerGrid 14 2 Neumann_Participant.msh -out Neumann_Participant_Mesh
+* Step 3    : Run Simulation, type ElmerSolver Dirichlet_Participant.sif and wait for simulation to finish
+* Step 4    : visulaize results, results should exist in Results folder, run paraview and open .vtu files to se solution
 * Hint      : Results in other examples not necessarily exist in Results folder, the location can be modified in .sif file
