@@ -7,14 +7,13 @@
 
 # Installation Instructions
 * preCICE
+    * install debian package(can also compile source code but package is easier), please refer to https://precice.org/installation-overview.html for installation
+* Elmer
     * install debian package(can also compile source code but package is easier)
-    * GO TO https://github.com/precice/precice/releases/tag/v2.2.1 and download libprecice2_2.2.1_bionic.deb, (remind quote, saved in precice software)
-    * GO TO the location of the downloaded debian package,type sudo dpkg -i libprecice2_2.2.1_bionic.deb
-    * To check the contents of the package, type sudo dpkg-deb -c libprecice2_2.2.1_bionic.deb 
-    * To read installed contents of package, type sudo dpkg -L libprecice2_2.2.1_bionic.deb (???, why it says it is not installed)
-    * To check installed packages, sudo apt list --installed, you will find libprecice2/now 2.2.1 amd64 [installed,local]
+    * For installing Elmer from binary package please refer to http://www.elmerfem.org/blog/binaries/ (recommended)
+    * To build Elmer from source code please refer to http://www.elmerfem.org/blog/compile/    
 
-# Important Links
+
 
 # Notes for next meeting
 
