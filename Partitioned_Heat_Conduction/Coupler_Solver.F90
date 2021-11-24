@@ -155,6 +155,7 @@ MODULE HelperMethods
             j = BCPerm(i)
             IF(j == 0) CYCLE
             copyData(j) = (dataVariable % Values(dataVariable % Perm(i)))
+            !copyData(j) = -1 * dataVariable % Values(dataVariable % Perm(i)) 
             ! IF( dataName == "temperature loads") THEN
             !     copyData(j) = -1 * dataVariable % Values(dataVariable % Perm(i)) 
             ! ELSE
