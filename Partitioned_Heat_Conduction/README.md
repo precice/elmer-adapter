@@ -20,6 +20,12 @@ It can be done in 2 ways
 These steps are required if the user want to regenerate the existing .msh file, gmsh software is required, open the .geo in gmsh by running command
 gmsh <FileName>.geo and follow the following tutorial https://www.youtube.com/watch?v=O1FyiBBuN98&ab_channel=JoshTheEngineer
 
+# Build the adapter
+The adapter is called during runtime by Elmer, it is developed as user defined code provided by Elmer features, so it has to be built before running the simulation,in order to do so, Elmer provides a fortran wrapper to make sure that user defined code is compiled using the same settings used to comiple ElmerSolver. Also while building the adapter, preCICE library has to be linked while building the adapter, so the path of preCICE shared library mus be provided.
+To compile the adapter, type `elmerf90 -o Coupler_Solver Coupler_Solver.F90 /usr/lib/x86_64-linux-gnu/libprecice.so.2`.
+
+For locating the path of preCICE shared library, type `dpkg -L libprecice2`, this will list all the files related to prceCICE package, search for the path of the shared library, it should be located in `/usr/lib`
+
 # Running Reference Example
 * Step 1    : Generate msh Files, type ElmerGrid 14 2 Reference_Problem.msh -out Reference_Problem_Mesh
 * Step 2    : Run Simulation, type ElmerSolver Reference_Problem.sif and wait for simulation to finish
