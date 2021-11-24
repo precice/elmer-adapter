@@ -45,7 +45,7 @@ Elmer allows the user to define external solver that can be called by ElmerSolve
 developed by the user must be compiled, so Elmer provides a wrapper to compile FORTRAN ,to make sure the compilation is done using the same settings, and compiler which Elmer compiled with, the wrapper is elmerf90.To compile user define code
 `elmerf90 -o <Output File Name> <Fortran File>`
 So the adapter developed is in the form of user defined code and it has to be compiled with the wrapper, it also needs to be linked with preCICE library as follows
-`elmerf90 -o Coupler_Solver Coupler_Solver.F90 /usr/lib/x86_64-linux-gnu/libprecice.so.2`
+`elmerf90 -o Coupler_Solver.so Coupler_Solver.F90 /usr/lib/x86_64-linux-gnu/libprecice.so.2`
 
 There is no need to use this command in the main directory, this is just for clarification purpose, the real use is before running each problem, the adapter has to be compiled, check the readme of each problem before running it.
 
