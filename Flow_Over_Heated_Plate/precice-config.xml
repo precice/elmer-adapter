@@ -31,7 +31,6 @@
         from="fluid-mesh"
         to="solid-mesh"
         constraint="consistent" />
-      <!-- <mapping:rbf-thin-plate-splines direction="read" from="Neumann-Mesh" to="Dirichlet-Mesh" constraint="consistent" x-dead="true" /> -->
     </participant>
 
     <participant name="fluid">
@@ -44,7 +43,6 @@
         from="solid-mesh"
         to="fluid-mesh"
         constraint="consistent" />
-      <!-- <mapping:rbf-thin-plate-splines direction="read" from="Dirichlet-Mesh" to="Neumann-Mesh" constraint="consistent" x-dead="true" /> -->
     </participant>
 
     <m2n:sockets from="solid" to="fluid" exchange-directory=".."/>
@@ -53,31 +51,9 @@
     <coupling-scheme:serial-explicit>
       <participants first="solid" second="fluid"/>
       <max-time value="1.0"/>
-      <!-- <max-time-windows value="3"/> 
-      <time-window-size value="1" valid-digits="10" method="fixed"/>  -->
       <time-window-size value="0.1"/>
       <exchange data="temperature flux 2" mesh="solid-mesh" from="solid" to="fluid" />
       <exchange data="temperature" mesh="fluid-mesh" from="fluid" to="solid" initialize="yes" />
     </coupling-scheme:serial-explicit>
-
-
-    <!-- <coupling-scheme:serial-implicit>
-      <participants first="dirichlet" second="neumann"/>
-      <max-time value="5.0"/>
-      <time-window-size value="1"/>
-      <max-iterations value="100"/>
-      <exchange data="temperature flux 2" mesh="dirichlet-mesh" from="dirichlet" to="neumann" />
-      <exchange data="temperature" mesh="neumann-mesh" from="neumann" to="dirichlet" initialize="true"/>
-      <relative-convergence-measure data="temperature flux 2" mesh="dirichlet-mesh" limit="1e-5"/>
-      <relative-convergence-measure data="temperature" mesh="neumann-mesh" limit="1e-5"/>
-      <acceleration:IQN-ILS>
-        <data name="temperature" mesh="neumann-mesh"/>
-        <initial-relaxation value="0.1"/>
-        <max-used-iterations value="10"/>
-        <time-windows-reused value="5"/>
-        <filter type="QR2" limit="1e-3"/>
-      </acceleration:IQN-ILS>
-    </coupling-scheme:serial-implicit> -->
-
   </solver-interface>
 </precice-configuration>

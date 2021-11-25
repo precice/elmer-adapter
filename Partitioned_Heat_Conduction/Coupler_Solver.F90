@@ -154,13 +154,11 @@ MODULE HelperMethods
         DO i = 1, mesh % NumberOfNodes
             j = BCPerm(i)
             IF(j == 0) CYCLE
+            ! USE THIS LINE FOR ELMER-ELMER
             copyData(j) = (dataVariable % Values(dataVariable % Perm(i)))
+
+            ! USE THIS LINE FOR ELMER-FENICS
             !copyData(j) = -1 * dataVariable % Values(dataVariable % Perm(i)) 
-            ! IF( dataName == "temperature loads") THEN
-            !     copyData(j) = -1 * dataVariable % Values(dataVariable % Perm(i)) 
-            ! ELSE
-            !     copyData(j) = dataVariable % Values(dataVariable % Perm(i))
-            ! END IF
         END DO 
     END SUBROUTINE CopyWriteData
 

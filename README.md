@@ -1,92 +1,39 @@
 # elmer-adapter
 **experimental** preCICE-adapter for the open source multiphysical simulation software Elmer FEM
 
-# Required Software
-* libprecice2_2.2.1(libprecice2_2.2.1_bionic.deb), make sure to install compatible version with operating system, here bionic is used because i have ubuntu 18.04
+# Getting started
 
+## Dependencies & Installation Instructions
 
-# Installation Instructions
 * preCICE
-    * install debian package(can also compile source code but package is easier), please refer to https://precice.org/installation-overview.html for installation
+    * Recommended: Install debian package, please refer to https://precice.org/installation-overview.html for installation
 * Elmer
-    * install debian package(can also compile source code but package is easier)
-    * For installing Elmer from binary package please refer to http://www.elmerfem.org/blog/binaries/ (recommended)
-    * To build Elmer from source code please refer to http://www.elmerfem.org/blog/compile/    
+    * Recommended: Install debian package, please refer to http://www.elmerfem.org/blog/binaries/ 
 
+## Use the adapter
 
+The adapter uses a custom-made Elmer solver for coupling with preCICE. This solver is compiled using `elmerf90` and then plugged into the `case.sif` file in a minimally-invaisve fashion. Examples for usage of the adapter can be found in `Partitioned_Heat_Conduction` and `Flow_Over_Heated_Plate`. For new users it is recommended to use these cases as a starting point. You can refer to the documentation of `Partitioned_Heat_Conduction` for all necessary steps.
 
-# Notes for next meeting
+## How to couple your own code
 
-@ https://github.com/precice/tutorials/tree/develop/partitioned-heat-conduction, within the read me file, the recatangular domain Omega = [0,2] x [0,1] how is that.
-Also for the analytical solution check 37ff the solution is not in page 37
+We assume you already have your own application in Elmer and you want to couple it to another solver using preCICE. Your application includes a `case.sif` file and the required mesh files.
 
-# Example Problem
-This is an example problem to qualify Data communication of data communication
-developped in the adapter, it is a simple 2D problem, a 2x2 square plate
-heated from the bottom at 5 degrees, while its boundary is kept constant
-from the top at 0 degrees, and the sides having zero heat flux.
+1. Take one of the existing example cases and copy the `Coupler_Solver.F90` from there into your project folder.
+2. Use the provided instructions to compile the adapter.
+3. Use one of the provided `case.sif` files from the example as a template and add the respective commands for calling the adapter in your `case.sif` file.
+4. Create an appropriate `precice-config.xml` for the coupling.
+5. Run your case in Elmer via `ElmerSolver case.sif`. You should now see that Elmer waits for the other participant. When you start the other participant your coupled simulation will be executed.
 
-# Usage
-There is HeatedPlate.geo file this the file defining the geometry and the 
-mesh generator using gmsh, it definies the 2x2 Plate and its 3 boundaries
-it can be open using gmsh,just make sure that gmsh is installed and 
-run at the current directory gmsh HeatedPlate.geo . The mesh is just a uniform
-recatangular mesh, you can adjust its size but changing the number of points
-on the lines even from the script of text editor.
+## Current restrictions & future work
 
-Also the mesh already saved from gmsh under HeatedPlate.msh, all you have to do
-is to run ElmerGrid 14 2 HeatedPlate.msh to generate mesh files necessary for
-Elmer Solver, these files will be generated in sub directory with name HeatedPlate. After that just run ElmerSolver case.sif. After the solver finishes
-a directory with the name Results will be created, inside it the .vtu file
-can be found and visualized in paraview.
+Currently, implicit coupling is not supported by the adapter. Parallelization and other advanced features were not explicitly developed or tested.
 
-# For Compiling user defined solver with precice
-Elmer allows the user to define external solver that can be called by ElmerSolver during Runtime, so before coupling at runtime, the Fortran code
-developed by the user must be compiled, so Elmer provides a wrapper to compile FORTRAN ,to make sure the compilation is done using the same settings, and compiler which Elmer compiled with, the wrapper is elmerf90.To compile user define code
-`elmerf90 -o <Output File Name> <Fortran File>`
-So the adapter developed is in the form of user defined code and it has to be compiled with the wrapper, it also needs to be linked with preCICE library as follows
-`elmerf90 -o Coupler_Solver.so Coupler_Solver.F90 /usr/lib/x86_64-linux-gnu/libprecice.so.2`
+Partitioned heat equation is thoroughly tested for explicit coupling and gives correct results for an Elmer-Elmer coupling and for Elmer-FEniCS coupling (where Elmer is the Dirichlet participant). If Elmer is the Neumann participant in Elmer-FEniCS coupling, problems occur (probably due to the flux computation, see thesis of Hisham Saeed for details).
 
-For locating the path of preCICE shared library, type `dpkg -L libprecice2`, this will list all the files related to prceCICE package, search for the path of the shared library, it should be located in `/usr/lib`
+The example case `Perpendicular_Flap` is currently only a monolithic simulation, but a good starting point for FSI. See (the perpendicular flap tutorial)[https://github.com/precice/tutorials/tree/master/perpendicular-flap] for details.
 
-There is no need to use this command in the main directory, this is just for clarification purpose, the real use is before running each problem, the adapter has to be compiled, check the readme of each problem before running it.
+`Coupler_Solver.F90` is currently duplicated for every example.
 
-# Project description
-Elmer Multiphysics solver adapter for Precice coupling library.
+# Development History
 
-Multiphysics simulation is a widely spread field, and it has many important application in engineering and real science; it allows scientist and engineers 
-to predict certain phenomena and their effect relatively in a precise way, such to help us in desiging sophistcated product, or analysing such natural phenomena 
-to understand what happens and take precaution against it. For example, weather simulation, stress analysis in the automotive and aerospace industry to predict the
-system fialure. One of the powerful tools designed for that is Elmer multiphysics simulation software, it was mainly developed by CSC – IT Center for Science in Finland 
-for Glacier simulation but it has other powerful area ranging from heat condution to acoustics simulation. One motivation to use it was the crystal growth simulation 
-by Leibnz institute for crystal growth. But as any softwares it has limitation, and in other domains are to be used, so the soultion is to couple different solvers together
-and that is where the power of precice coupling libreary comes, precice is a cupling API that allows user to couple different solvers solving same problem 
-but different part of the domain, and allows to steer the simulation and exchange data between the solvers, but in order to use any solver with precice, an adapter
-has to be developed for the intended solver. And that the aim of this thesis is to develop an Elmer adapter for precice coupling library. 
-
-# Put abstract as attachment in the mail
-go to english center
-make paragraphs
-Also Leibnz use it for crystal growth, but some limitations,use other tools as well in combination with other solver and couple it
-The solution for coupling is preCICE
-3 paragraphs 
--Multiphysics
--Elmer
--Precice and aim
-
-# Table of contents
-Introduction
-In between
-Conclusion
-think the thesis from the end, what i want to contribute to scientific community, adapter and
-tutorials, section with results, application, chapter of test cases, check Makis,richard thesis
-2 sections on flap test case, for me flow over hot plate,crystal growth
-some times put something someone what is working on.
-Applications that support conclusion.
-Explaining how the results work.
-understand precice,elmer
-could include math it depends on the results,if needed only the math required for explaining what you need
-only the governing equations is enough, no need to explain weak formulation, unless like fenics tutorial
-structuring the test problem
-
-Multiphysics simulation is a widely spread field, and it has many important application in engineering and real science; it allows scientist and engineers to predict certain phenomena and their effect relatively in a precise way, such to help us in designing sophisticated product, or analysing such natural phenomena to understand what happens and take precaution against it. For example, weather simulation, stress analysis in the automotive and aerospace industry to predict thesystem failure. One of the powerful tools designed for that is Elmer multiphysics simulation software, it was mainly developed for Glacier simulation by CSC – IT Center for Science in Finland but it has other powerful areas ranging from heat conduction to acoustics simulation. One motivation to use it was the crystal growth simulation by Leibnz institute for crystal growth. But as any softwares it has limitation, and in other domains are to be used, so the solution is to couple different solvers togetherand that is where the power of preCICE coupling library comes, precice is a coupling API that allows user to couple different solvers solving same problem but different part of the domain, and allows to steer the simulation and exchange data between the solvers, but in order to use any solver with preCICE, an adapterhas to be developed for the intended solver. And that the aim of this thesis is to develop an Elmer adapter for preCICE coupling library. 
+The initial version of this adapter was developed by [Hisham Saeed](ADD LINK TO MEDIATUM!) during his work on his master's thesis under supervision of [Benjamin Rodenberg](https://www.in.tum.de/i05/personen/personen/benjamin-rodenberg/).

@@ -1,9 +1,0 @@
-{
-  "participant_name": "neumann",
-  "config_file_name": "../precice-config.xml",
-  "interface": {
-      "coupling_mesh_name": "neumann-mesh",
-      "write_data_name": "temperature",
-      "read_data_name": "temperature flux 1"
-    }
-}
