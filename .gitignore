@@ -12,9 +12,8 @@
 *.mod
 
 # ignoring precice log files
-*.log
-*.json
-*.pyc
+*events-summary.log
+*events.json
 
 # ignoring specific sif file
 entities.sif
