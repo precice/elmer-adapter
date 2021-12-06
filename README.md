@@ -36,4 +36,4 @@ The example case `Perpendicular_Flap` is currently only a monolithic simulation,
 
 # Development History
 
-The initial version of this adapter was developed by [Hisham Saeed](ADD LINK TO MEDIATUM!) during his work on his master's thesis under supervision of [Benjamin Rodenberg](https://www.in.tum.de/i05/personen/personen/benjamin-rodenberg/).
+The initial version of this adapter was developed by [Hisham Saeed](https://github.com/HishamSaeed) during his work on his [master's thesis](https://mediatum.ub.tum.de/604993?query=hisham&show_id=1636717&srcnodeid=604993) under supervision of [Benjamin Rodenberg](https://www.in.tum.de/i05/personen/personen/benjamin-rodenberg/).
