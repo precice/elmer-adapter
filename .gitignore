@@ -1,0 +1,31 @@
+# ignoring mesh Files
+*.boundary
+*.elements
+*.header
+*.nodes
+*.names
+*.prof
+
+# ignoring binary files
+*.out
+*.so
+*.mod
+
+# ignoring precice log files
+*events-summary.log
+*events.json
+
+# ignoring specific sif file
+entities.sif
+venv
+
+# ignoring results directory
+Results/
+build/
+out/
+
+# ignoring a (potentially added) FEniCS case
+Partitioned_Heat_Conduction/fenics
+
+# ignoring precice run directory
+*/precice-run
