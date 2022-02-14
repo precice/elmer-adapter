@@ -11,9 +11,10 @@
 *.so
 *.mod
 
-# ignoring precice log files
+# ignoring (precice) log files
 *events-summary.log
 *events.json
+*run.log
 
 # ignoring specific sif file
 entities.sif
@@ -26,6 +27,9 @@ out/
 
 # ignoring a (potentially added) FEniCS case
 Partitioned_Heat_Conduction/fenics
+
+# ignore a (poptentially added) OpenFOAM case
+Flow_Over_Heated_Plate/fluid-openfoam
 
 # ignoring precice run directory
 */precice-run
