@@ -18,6 +18,7 @@ Simulation
   Timestep Sizes = 0.1
   Solver Input File = case.sif
   Post File = Solid.vtu
+  Use Mesh Names = Logical True
 
   maskName = String "Coupler Interface"
   participantName = String "Solid"
@@ -34,8 +35,8 @@ Constants
 End
 
 Body 1
-  Target Bodies(1) = 4
-  Name = "Body 1"
+  !Target Bodies(1) = 4
+  Name = "Plate"
   Equation = 1
   Material = 1
   Body Force = 1
@@ -75,6 +76,7 @@ Solver 2
  Equation = "flux compute"
  Procedure = "FluxSolver" "FluxSolver"
  Calculate Flux = Logical True
+ Calculate Flux Abs = Logical True
  Flux Variable = String Temperature
  Flux Coefficient = String "Heat Conductivity"
  Linear System Solver = "Iterative"
@@ -89,7 +91,7 @@ Solver 3
     Equation = "Initialize"
     Procedure = "../Coupler_Solver.so" "CouplerSolver"
     readDataName = String "Temperature"
-    writeDataName = String "temperature flux 2"
+    writeDataName = String "temperature flux_abs"
     Exec Solver = before all
 End
 
@@ -97,7 +99,7 @@ Solver 4
     Equation = "ReadData"
     Procedure = "../Coupler_Solver.so" "CouplerSolver"
     readDataName = String "Temperature"
-    writeDataName = String "temperature flux 2"
+    writeDataName = String "temperature flux_abs"
     Exec Solver = before timestep 
 End
 
@@ -105,7 +107,7 @@ Solver 5
     Equation = "WriteDataAdvance"
     Procedure = "../Coupler_Solver.so" "CouplerSolver"
     readDataName = String "Temperature"
-    writeDataName = String "temperature flux 2"
+    writeDataName = String "temperature flux_abs"
     Exec Solver = after timestep 
 End
 
@@ -113,7 +115,7 @@ Solver 6
     Equation = "Finalize"
     Procedure = "../Coupler_Solver.so" "CouplerSolver"
     readDataName = String "Temperature"
-    writeDataName = String "temperature flux 2"
+    writeDataName = String "temperature flux_abs"
     Exec Solver = after all 
 End
 
@@ -135,19 +137,19 @@ Initial Condition 1
 End
 
 Boundary Condition 1
-  Target Boundaries(1) = 1
+  !Target Boundaries(1) = 1
   Name = "Plate_Bottom"
   Temperature = 310
 End
 
 Boundary Condition 2
-  Target Boundaries(1) = 2 
+  !Target Boundaries(1) = 2 
   Name = "Plate_Sides"
 End
 
 Boundary Condition 3
-  Target Boundaries(1) = 3
-  Name = "Coupling Interface"
+  !Target Boundaries(1) = 3
+  Name = "Coupling_Interface"
   Temperature = Equals "Temperature"
   Coupler Interface = Logical True
 End
