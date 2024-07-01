@@ -13,7 +13,7 @@ MODULE HelperMethods
 
     ! END SUBROUTINE StoreCheckpoint
 
-    SUBROUTINE Print(dataName,mesh,BCPerm,CoordVals)
+    SUBROUTINE Print(dataName,mesh,BoundaryPerm,CoordVals)
 
         !-------------------------Strings----------------------------------------------
         CHARACTER(LEN=MAX_NAME_LEN)         :: dataName
@@ -23,21 +23,26 @@ MODULE HelperMethods
         TYPE(Mesh_t), POINTER               :: mesh
         !------------------------Data Arrays----------------------------------------------
         REAL(KIND=dp), POINTER              :: CoordVals(:)
-        INTEGER, POINTER                    :: BCPerm(:)
+        INTEGER, POINTER                    :: BoundaryPerm(:)
         !--------------------------Iterators-------------------------------------
         INTEGER                             :: i,j
-    
+        !--------------------------Mesh-------------------------------------
+        INTEGER                         :: meshDim
         dataVariable  => VariableGet( mesh % Variables, dataName)
-
+        meshDim = mesh % MaxDim
         CALL Info('CouplerSolver','Printing ' //TRIM(dataName))
         DO i = 1, mesh % NumberOfNodes
-            j = BCPerm(i)
+            j = BoundaryPerm(i)
             IF(j == 0) CYCLE
-            
-            write(infoMessage,'(A,I5,A,I5,A,F10.4,A,F10.2,A,F10.2)') 'Node: ',i,' Index: ',j,' Value: ' &
+            IF (meshDim == 2) THEN
+                write(infoMessage,'(A,I5,A,I5,A,F10.4,A,F10.2,A,F10.2)') 'Node: ',i,' Index: ',j,' Value: ' &
                             ,dataVariable % Values(dataVariable % Perm(i)),&
-                            ' X= ', CoordVals(2*j-1), ' Y= ', CoordVals(2*j)  
-                                                          
+                            ' X= ', CoordVals(meshDim * j-1), ' Y= ', CoordVals(meshDim * j) 
+            ELSE IF (meshDim == 3) THEN
+                write(infoMessage,'(A,I5,A,I5,A,F10.4,A,F10.2,A,F10.2,A,F10.2)') 'Node: ',i,' Index: ',j,' Value: ' &
+                            ,dataVariable % Values(dataVariable % Perm(i)),&
+                            ' X= ', CoordVals(meshDim * j-2), ' Y= ', CoordVals(meshDim *j-1), ' Z= ', CoordVals(meshDim *j) 
+            END IF                                        
             CALL Info('CouplerSolver',infoMessage)
 
         END DO 
@@ -55,7 +60,7 @@ MODULE HelperMethods
         TYPE(Mesh_t), POINTER               :: mesh
         !------------------------Data Arrays----------------------------------------------
         REAL(KIND=dp), POINTER              :: CoordVals(:)
-        INTEGER, POINTER                    :: BCPerm(:)
+        INTEGER, POINTER                    :: BoundaryPerm(:)
         !--------------------------Iterators-------------------------------------
         INTEGER                             :: i,j
     
@@ -74,7 +79,7 @@ MODULE HelperMethods
         END DO 
     END SUBROUTINE PrintDomain
 
-    SUBROUTINE CreateVariable(dataName,dataType,mesh,BCPerm,Solver,solverParams)
+    SUBROUTINE CreateVariable(dataName,dataType,mesh,BoundaryPerm,Solver,solverParams)
         !-------------------------Strings-----------------------------------------------
         CHARACTER(LEN=MAX_NAME_LEN)         :: dataName
         CHARACTER(LEN=MAX_NAME_LEN)         :: infoMessage
@@ -85,7 +90,7 @@ MODULE HelperMethods
         TYPE(Solver_t)                      :: Solver
         TYPE(ValueList_t), POINTER          :: solverParams
         !------------------------Data Arrays--------------------------------------------
-        INTEGER, POINTER                    :: BCPerm(:)
+        INTEGER, POINTER                    :: BoundaryPerm(:)
         !------------------------Mesh Data----------------------------------------------
         INTEGER                         :: Dofs
         !--------------------------Logic-Control-------------------------------------
@@ -97,13 +102,12 @@ MODULE HelperMethods
         IF(ASSOCIATED( dataVariable ) ) THEN
             CALL Info('CouplerSolver','Using existing variable : '//TRIM(dataName) )
         ELSE
-            CALL Info('CouplerSolver','Creating variable  as it does not exist: '//TRIM(dataName))
-
-            Dofs = ListGetInteger( solverParams,'Field Dofs',Found )
-            IF(.NOT. Found ) Dofs = 1
-            CALL VariableAddVector( mesh % Variables, mesh, Solver, dataName, Dofs, &
-                Perm = BCPerm, Secondary = .TRUE. )
-            dataVariable => VariableGet( mesh % Variables, dataName ) 
+            CALL FATAL('CouplerSolver', 'Variable does not exist : ' // TRIM(dataName) )
+            ! Dofs = ListGetInteger( solverParams,'Field Dofs',Found )
+            ! IF(.NOT. Found ) Dofs = 1
+            ! CALL VariableAddVector( mesh % Variables, mesh, Solver, dataName, Dofs, &
+            !     Perm = BoundaryPerm, Secondary = .TRUE. )
+            ! dataVariable => VariableGet( mesh % Variables, dataName ) 
         END IF
 
 
@@ -111,7 +115,7 @@ MODULE HelperMethods
     
     
 
-    SUBROUTINE CopyReadData(dataName,mesh,BCPerm,copyData)
+    SUBROUTINE CopyReadData(dataName,mesh,BoundaryPerm,copyData)
         !-------------------------Strings-----------------------------------------------
         CHARACTER(LEN=MAX_NAME_LEN)         :: dataName
         !-------------------------Elmer_Types----------------------------------------------
@@ -119,7 +123,7 @@ MODULE HelperMethods
         TYPE(Mesh_t), POINTER               :: mesh
         ! !------------------------Data Arrays----------------------------------------------
         REAL(KIND=dp), POINTER              :: copyData(:)
-        INTEGER, POINTER                    :: BCPerm(:)
+        INTEGER, POINTER                    :: BoundaryPerm(:)
         !--------------------------Iterators-------------------------------------
         INTEGER                             :: i,j
 
@@ -127,7 +131,7 @@ MODULE HelperMethods
         dataVariable  => VariableGet( mesh % Variables, dataName)
 
         DO i = 1, mesh % NumberOfNodes
-            j = BCPerm(i)
+            j = BoundaryPerm(i)
             IF(j == 0) CYCLE
             dataVariable % Values(dataVariable % Perm(i)) = copyData(j)
             
@@ -136,7 +140,7 @@ MODULE HelperMethods
 
     END SUBROUTINE CopyReadData
 
-    SUBROUTINE CopyWriteData(dataName,mesh,BCPerm,copyData)
+    SUBROUTINE CopyWriteData(dataName,mesh,BoundaryPerm,copyData)
         !-------------------------Strings-----------------------------------------------
         CHARACTER(LEN=MAX_NAME_LEN)         :: dataName
         !-------------------------Elmer_Types----------------------------------------------
@@ -144,7 +148,7 @@ MODULE HelperMethods
         TYPE(Mesh_t), POINTER               :: mesh
         !------------------------Data Arrays----------------------------------------------
         REAL(KIND=dp), POINTER              :: copyData(:)
-        INTEGER, POINTER                    :: BCPerm(:)
+        INTEGER, POINTER                    :: BoundaryPerm(:)
         !--------------------------Iterators-------------------------------------
         INTEGER                             :: i,j
 
@@ -152,7 +156,7 @@ MODULE HelperMethods
         dataVariable  => VariableGet( mesh % Variables, dataName)
 
         DO i = 1, mesh % NumberOfNodes
-            j = BCPerm(i)
+            j = BoundaryPerm(i)
             IF(j == 0) CYCLE
             copyData(j) = dataVariable % Values(dataVariable % Perm(i))
             ! IF( dataName == "temperature loads") THEN
@@ -182,21 +186,16 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
 
 
     !--------------------------Variables-Start-------------------------------------------
-    
-    !--------------------------MPI-Variables-------------------------------------
-    INTEGER                         :: rank,commsize
-    !--------------------------Precice-Control-------------------------------------
-    INTEGER                         :: itask = 1
-
     !--------------------------Logic-Control-------------------------------------
     LOGICAL                             :: Found
-    !--------------------------Iterators-------------------------------------
-    INTEGER                             :: i,j
-
-
+    !--------------------------MPI-Variables-------------------------------------
+    INTEGER                         :: rank,commsize
+   
     !--------------------------Elmer-Variables-------------------------------------
+    !-------------------------Loop_Control-------------------------------------
+    INTEGER                         :: itask = 1
     !-------------------------Strings----------------------------------------------
-    CHARACTER(LEN=MAX_NAME_LEN)         :: maskName
+    CHARACTER(LEN=MAX_NAME_LEN)         :: BoundaryName
     CHARACTER(LEN=MAX_NAME_LEN)         :: infoMessage
     !-------------------------Elmer_Types----------------------------------------------
     TYPE(Variable_t), POINTER           :: readDataVariable,writeDataVariable
@@ -204,266 +203,211 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
     TYPE(ValueList_t), POINTER          :: simulation, solverParams ! Simulation gets Simulation list, & solverParams hold solver1,solver 2,etc
     !------------------------Data Arrays----------------------------------------------
     REAL(KIND=dp), POINTER              :: CoordVals(:)
-    INTEGER, POINTER                    :: BCPerm(:)
+    INTEGER, POINTER                    :: BoundaryPerm(:)
     !------------------------Time Variable----------------------------------------------
     TYPE(Variable_t), POINTER :: TimeVar
     Real(KIND=dp) :: Time
 
     !--------------------------Precice-Variables-------------------------------------
     !-------------------------Strings----------------------------------------------
-    CHARACTER(LEN=MAX_NAME_LEN)         :: participantName, meshName, configPath, readDataName,writeDataName
-    ! CHARACTER(LEN=MAX_NAME_LEN)         :: writeInitialData, readItCheckp, writeItCheckp ! ?? Do not know
-    CHARACTER*50                        :: writeInitialData, readItCheckp, writeItCheckp
+    CHARACTER(LEN=MAX_NAME_LEN)         :: config
+    CHARACTER(LEN=MAX_NAME_LEN)         :: participantName, meshName
+    CHARACTER(LEN=MAX_NAME_LEN)         :: readDataName,writeDataName
+
     !-------------------------IDs-Integer----------------------------------------------
-    INTEGER                         :: meshID,readDataID, writeDataID
+    INTEGER                         :: meshID,readDataID, writeDataID, meshDim
     !------------------------Data Arrays----------------------------------------------
-    REAL(KIND=dp), POINTER :: writeData(:), readData(:)
+    REAL(KIND=dp), POINTER :: vertices(:), writeData(:), readData(:)
     INTEGER, POINTER                :: vertexIDs(:)
     !------------------------Mesh Data----------------------------------------------
-    INTEGER                         :: vertexSize
+    INTEGER                         :: BoundaryNodes
     INTEGER                         :: Dofs
     INTEGER                         :: dimensions ! ?? Do not know 
     !----------------------Time Loop Control Variables-----------------------------
     INTEGER                         :: bool
     INTEGER                         :: ongoing
+    INTEGER                         :: i,j
     !--------------------------Variables-End-------------------------------------------
 
-    integer, dimension (10) :: vertecies
-
     !--------------------------SAVE-Start-------------------------------------------
-    SAVE meshID,readDataID,writeDataID
     SAVE meshName,readDataName,writeDataName
     SAVE itask
-    SAVE BCPerm,CoordVals,vertexIDs
+    SAVE BoundaryPerm,CoordVals,vertexIDs
     SAVE readData,writeData
-    SAVE vertexSize
-
+    SAVE BoundaryNodes
     !--------------------------SAVE-End-------------------------------------------
 
-    !--------------------------Initialize-Start-------------------------------------------
-    CALL Info(''//achar(27)//'[31mCouplerSolver ', 'Transfering results between different software ')
 
+    !--------------------------Initialize-Start-------------------------------------------
     Simulation => GetSimulation()
     Mesh => Solver % Mesh
     solverParams => GetSolverParams()
-
+    meshDim = Mesh % MaxDim
+    ! PRINT *, 'Mesh dimension is:', meshDim  
+    
     rank = 0
     commsize = 1
-    !--------------------------Initialize-End-------------------------------------------
-    !--Solid
-    !vertecies = (/1,28,27,26,25,24,23,22,21,3/)
-    !--Fluid
-    vertecies = (/1,29,28,27,26,25,24,23,22,3/)
-    ! CALL Info('CouplerSolver','Enter Key To Continue')
-    ! read(*,*)
-
-    writeInitialData(1:50)='                                                  '
-    readItCheckp(1:50)='                                                  '
-    writeItCheckp(1:50)='                                                  '
-
     select case(itask)
-        ! TODO make enum
     case(1)
+        CALL Info('CouplerSolver ', 'Initializing Coupler Solver')
         !--- First Time Visited, Initialization
         !-- First Time Visit, Create Precice, create nodes at interface
         !----------------------------- Initialize---------------------
+        
         !----------------Acquire Names for solver---------------------
-        maskName = GetString( Simulation, 'maskName', Found )
+        BoundaryName = GetString( Simulation, 'maskName', Found )
         participantName = GetString( Simulation, 'participantName', Found )
+        
+        !-----------------Convert to Precice Naming Convention    
+        IF (participantName == 'solid') THEN
+            participantName = 'Solid'
+        END IF
+        IF (participantName == 'fluid') THEN
+            participantName = 'Fluid'
+        END IF
         meshName = GetString( Simulation, 'meshName', Found )
-        configPath = GetString( Simulation, 'configPath', Found )
+        IF (meshName == 'solid-mesh') THEN
+            meshName = 'Solid-Mesh'
+        END IF
+        IF (meshName == 'fluid-mesh') THEN
+            meshName = 'Fluid-Mesh'
+        END IF
+        !---------------------------------------------------------------------
 
-        Print *, TRIM(maskName)," ",TRIM(participantName)," ",TRIM(meshName)," ",TRIM(configPath)
-        
+        !-----------------Get Config Path-------------------------------------
+        config = GetString( Simulation, 'configPath', Found )
 
-        !-----------Identify Vertex on Coupling Interface & Save Coordinates--------------------
-        NULLIFY( BCPerm )    
-        ALLOCATE( BCPerm( Mesh % NumberOfNodes ) )
-        BCPerm = 0
-        ! CALL MakePermUsingMask( Model, Solver, Mesh, MaskName, .FALSE., &
-        !     BCPerm, vertexSize )
-        CALL MakePermUsingMask( Model, Solver, Mesh, MaskName, .TRUE., &
-            BCPerm, vertexSize )
-        CALL Info('CouplerSolver','Number of nodes at interface:'//TRIM(I2S(vertexSize)))
-
-        
-
-        ALLOCATE( CoordVals(2*vertexSize) )
-        ALLOCATE(vertexIDs(vertexSize)) 
+        Print *, TRIM(BoundaryName)," ",TRIM(participantName)," ",TRIM(meshName)," ",TRIM(config)
+         !-----------Identify Vertex on Coupling Interface & Save Coordinates--------------------
+        NULLIFY( BoundaryPerm )    
+        ALLOCATE( BoundaryPerm( Mesh % NumberOfNodes ) )
+        BoundaryPerm = 0
+        BoundaryNodes = 0
+        CALL MakePermUsingMask( Model,Model%Solver,Model%Mesh,BoundaryName,.FALSE., &
+            BoundaryPerm,BoundaryNodes)
+            
+        CALL Info('CouplerSolver','Number of nodes at interface:'//TRIM(I2S(BoundaryNodes)))
+        ALLOCATE( CoordVals(meshDim * BoundaryNodes) )
+        ALLOCATE(vertexIDs(BoundaryNodes)) 
         DO i=1,Mesh % NumberOfNodes
-            j = BCPerm(i)
-            CoordVals(2*j-1) = mesh % Nodes % x(i)
-            CoordVals(2*j) = mesh % Nodes % y(i)
-            ! CoordVals(3*j) = mesh % Nodes % z(i)
-            ! IF(j /= 0) THEN
-            !     vertexIDs(j) = j
-            ! END IF
+            j = BoundaryPerm(i)
+            IF(j == 0) CYCLE
+            IF (meshDim == 2) THEN
+                CoordVals(meshDim *j-1) = mesh % Nodes % x(i)
+                CoordVals(meshDim*j)    = mesh % Nodes % y(i)
+            ELSE IF (meshDim == 3) THEN
+                CoordVals(meshDim *j-2) = mesh % Nodes % x(i)
+                CoordVals(meshDim *j-1) = mesh % Nodes % y(i)
+                CoordVals(meshDim *j)   = mesh % Nodes % z(i)                
+            END IF            
         END DO
-        CALL Info('CouplerSolver','Created nodes at interface')   
         
-        !-----------Identify read Variables and Create it if it does not exist--------------------
-        CALL CreateVariable(readDataName,'readDataName',mesh,BCPerm,Solver,solverParams)
+        CALL Info('CouplerSolver','Created nodes at interface')  
 
-        !-----------Print Read Values, For Debugging Purposes--------------------
-        CALL Info('CouplerSolver','Printing read Data')
-        CALL Print(readDataName,mesh ,BCPerm,CoordVals)
-        !------------------------------------------------------------------------------
-       
-        !-----------Identify write Variables and Create it if it does not exist--------------------
-        CALL CreateVariable(writeDataName,'writeDataName',mesh,BCPerm,Solver,solverParams)
+        ! !-----------Identify read and write Variables and Create it if it does not exist--------------------
+        CALL CreateVariable(readDataName,'readDataName',mesh,BoundaryPerm,Solver,solverParams)
+        CALL CreateVariable(writeDataName,'writeDataName',mesh,BoundaryPerm,Solver,solverParams)
+        !-----------------------------------------------------------------------------------------
 
-        !-----------Print Write Values, For Debugging Purposes--------------------
-        CALL Info('CouplerSolver','Printing write Data')
-        CALL Print(writeDataName,mesh ,BCPerm,CoordVals)
-
-        ! !------------------------------------------------------------------------------
-        ! !---------------Initializing Precice------------------------------------------
+        ! !---------------Initializing Precice------------------------------------------ 
+        CALL Info('CouplerSolver','Initializing Precice')     
+        CALL precicef_create(participantName, config, rank, commsize)
         
-        ! IF (participantName == "neumann") THEN
-        !     rank =1
-        ! END IF
-        
-        CALL precicef_create(participantName, configPath, rank, commsize)
-        
-        writeInitialData(1:50)='                                                  '
-        readItCheckp(1:50)='                                                  '
-        writeItCheckp(1:50)='                                                  '
-
-        CALL precicef_get_dims(dimensions)
-        CALL precicef_get_mesh_id(meshName, meshID)
-        CALL precicef_set_vertices(meshID, vertexSize, CoordVals, vertexIDs)
-
-        CALL precicef_get_data_id(readDataName,meshID,readDataID)
-        CALL precicef_get_data_id(writeDataName,meshID,writeDataID)
-
-        ALLOCATE(readData(VertexSize))
-        ALLOCATE(writeData(VertexSize))
+        CALL Info('CouplerSolver','Setting up mesh in Precice')
+        CALL precicef_get_mesh_dimensions(meshName, dimensions)
+        CALL precicef_set_vertices(meshName, BoundaryNodes, CoordVals, vertexIDs)
+        ALLOCATE(readData(BoundaryNodes*dimensions))
+        ALLOCATE(writeData(BoundaryNodes*dimensions))
 
         readData = 0
         writeData = 0
 
-
-        !----------------------Initializing Data------------------------------------
-        CALL precicef_initialize(dt)
-        CALL precicef_action_write_initial_data(writeInitialData)
-        CALL precicef_is_action_required(writeInitialData, bool)
-        
-        
-        
+        CALL precicef_requires_initial_data(bool)
         IF (bool.EQ.1) THEN
-            CALL Info('CouplerSolver','Writing Initial Data')
-            CALL CopyWriteData(writeDataName,mesh,BCPerm,writeData)
-            CALL precicef_write_bsdata(writeDataID, vertexSize, vertexIDs, writeData)
-            CALL precicef_mark_action_fulfilled(writeInitialData)
+            WRITE (*,*) 'TODO: Provide initial data if needed'
+            CALL CopyWriteData(writeDataName,mesh,BoundaryPerm,writeData)
+            IF (writeDataName == 'temperature') THEN
+                CALL precicef_write_data(meshName, 'Temperature', BoundaryNodes, vertexIDs, writeData)
+            ELSE IF (writeDataName == 'temperature flux_abs') THEN
+                CALL precicef_write_data(meshName, 'Heat-Flux', BoundaryNodes, vertexIDs, writeData)
+            ELSE
+                CALL precicef_write_data(meshName, writeDataName, BoundaryNodes, vertexIDs, writeData)
+            END IF
+        ELSE
+            WRITE (*,*) 'No initial data required'
         ENDIF
-
-        CALL precicef_initialize_data()
-      
+        CALL precicef_initialize()
         CALL precicef_is_coupling_ongoing(ongoing)
-        
+        ! !------------------------------------------------------------------------------
 
         itask = 2
     case(2)
-
-        CALL precicef_action_write_iter_checkp(writeItCheckp)
-        CALL precicef_is_action_required(writeItCheckp, bool)
-        
-        write(infoMessage,'(A,I2)') writeItCheckp,bool
-        CALL Info('CouplerSolver',infoMessage)
+        !-------------------Copy Read values from Variable to buffer---------------------
+        CALL precicef_requires_reading_checkpoint(bool)
 
         IF (bool.EQ.1) THEN
-          CALL Info('CouplerSolver','Writing iteration checkpoint')
-          CALL precicef_mark_action_fulfilled(writeItCheckp)
+            WRITE (*,*) 'DUMMY: Reading iteration checkpoint'
+        ELSE
+            WRITE (*,*) 'No reading iteration checkpoint required'
         ENDIF
-
-        CALL Info('CouplerSolver','Reading Data')
-        CALL precicef_read_bsdata(readDataID, vertexSize, vertexIDs, readData)
-
-        CALL Info('CouplerSolver','Copy Read Data to Variable')
-        CALL CopyReadData(readDataName,mesh,BCPerm,readData)
-
-        CALL Info('CouplerSolver','Printing read Data')
-        CALL Print(readDataName,mesh ,BCPerm,CoordVals)
         
-
-        CALL Info('CouplerSolver','Printing write Data')
-        CALL Print(writeDataName,mesh ,BCPerm,CoordVals)
+        CALL Info('CouplerSolver ', 'Readinging the data from Precice')    
+        CALL precicef_get_max_time_step_size(dt)
         
+        !-------------------Sticking Precice Naming Convention-------------------------------------
+        IF (readDataName == 'temperature') THEN
+            CALL precicef_read_data(meshName, 'Temperature', BoundaryNodes, vertexIDs, dt, readData)
+        ELSE IF (readDataName == 'temperature flux_abs') THEN
+            CALL precicef_read_data(meshName, 'Heat-Flux', BoundaryNodes, vertexIDs, dt, readData)
+        ELSE
+            CALL precicef_read_data(meshName, readDataName, BoundaryNodes, vertexIDs, dt, readData)
+        END IF
+
+        CALL CopyReadData(readDataName,mesh,BoundaryPerm,readData)
+        CALL Info('CouplerSolver','Printing the read data(From Precice to Elmer)')
+        ! CALL Print(readDataName,mesh ,BoundaryPerm,CoordVals)
+        !-----------------------------------------------------------------------------------------
 
         itask = 3
     case(3)
-        !-------------------Copy Write values from Variable to buffer---------------------
+        !-------------------Copy Write values from Variable to buffer----------------------------
+        CALL CopyWriteData(writeDataName,mesh,BoundaryPerm,writeData)
+        CALL Info('CouplerSolver','Printing the write data (From Elmer to Precice)')
+        ! CALL Print(writeDataName,mesh ,BoundaryPerm,CoordVals)
+
+        !-------------------Sticking Precice Naming Convention-------------------------------------
+        IF (writeDataName == 'temperature') THEN
+            CALL precicef_write_data(meshName, 'Temperature', BoundaryNodes, vertexIDs, writeData)
+        ELSE IF (writeDataName == 'temperature flux_abs') THEN
+            CALL precicef_write_data(meshName, 'Heat-Flux', BoundaryNodes, vertexIDs, writeData)
+        ELSE
+            CALL precicef_write_data(meshName, writeDataName, BoundaryNodes, vertexIDs, writeData)
+        END IF
+
         
-        CALL Info('CouplerSolver','Copy Write Data to Variable')
-        CALL CopyWriteData(writeDataName,mesh,BCPerm,writeData)
-
-        CALL Info('CouplerSolver','Writing Data')
-        CALL precicef_write_bsdata(writeDataID, vertexSize, vertexIDs, writeData)
-
-        CALL Info('CouplerSolver','Printing write Data')
-        CALL Print(writeDataName,mesh ,BCPerm,CoordVals)
-        
-        CALL Info('CouplerSolver','Printing read Data')
-        CALL Print(readDataName,mesh ,BCPerm,CoordVals)
-
-        !--------------------Advance time loop---------------------------------------
+        !-------------------Advance Precice-------------------------------------------------------
         CALL precicef_advance(dt)
-
-        CALL precicef_action_read_iter_checkp(readItCheckp)
-        CALL precicef_is_action_required(readItCheckp, bool)
-        
-        IF (bool.EQ.1) THEN
-         
-          write(infoMessage,'(A,I2)') readItCheckp,bool
-          CALL Info('CouplerSolver',infoMessage)  
-          CALL Info('CouplerSolver','Reading iteration checkpoint')
-          CALL precicef_mark_action_fulfilled(readItCheckp)
-        ENDIF
-
-        
-
         CALL precicef_is_coupling_ongoing(ongoing)
-
+        
         IF(ongoing.EQ.0) THEN
             itask = 4
         ELSE
             itask = 2
         END IF
-          
-    case(4)    
-        !----------------------------------------Finailize--------------------------------------
+        !-----------------------------------------------------------------------------------------
+
+    case(4)
         CALL Info('CouplerSolver','Precice Finalize')
         CALL precicef_finalize()
 
+        ! DEALLOCATE(writeData)
+        ! DEALLOCATE(readData)
+        ! DEALLOCATE(vertexIDs)
     case(5)
-        ! CALL PrintDomain('temperature loads',mesh)
-        CALL Info('CouplerSolver','Printing Temperature')
-        readDataVariable  => VariableGet( mesh % Variables, 'temperature ')
-        DO i = 1, 10
-            
-            
-            write(infoMessage,'(A,I5,A,F10.4)') 'Node: ',vertecies(i),' Value: ', &
-                        readDataVariable % Values(readDataVariable % Perm(vertecies(i)))
-                          
-            CALL Info('CouplerSolver',infoMessage)
-            
-        END DO
-
-        CALL Info('CouplerSolver','Printing temperature flux 2')
-        readDataVariable  => VariableGet( mesh % Variables, 'temperature flux 2')
-        DO i = 1, 10
-            
-            
-            write(infoMessage,'(A,I5,A,F10.4)') 'Node: ',vertecies(i),' Value: ', &
-                        readDataVariable % Values(readDataVariable % Perm(vertecies(i)))
-                          
-            CALL Info('CouplerSolver',infoMessage)
-            
-        END DO
+        CALL Info('CouplerSolver ', 'Testing')
     end select
 
-
-    CALL Info('CouplerSolver',' Ended '//achar(27)//'[0m.')
+    CALL Info('CouplerSolver','Ended')
 END SUBROUTINE CouplerSolver
 
 
