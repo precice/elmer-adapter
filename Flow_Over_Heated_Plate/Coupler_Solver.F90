@@ -313,7 +313,7 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
         CALL Info('CouplerSolver','Initializing preCICE')     
         CALL precicef_create(participantName, config, rank, commsize)
         
-        CALL Info('CouplerSolver','Setting up mesh in Precice')
+        CALL Info('CouplerSolver','Setting up mesh in preCICE')
         CALL precicef_get_mesh_dimensions(meshName, dimensions)
         CALL precicef_set_vertices(meshName, BoundaryNodes, CoordVals, vertexIDs)
         ALLOCATE(readData(BoundaryNodes*dimensions))
