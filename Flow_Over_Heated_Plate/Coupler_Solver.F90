@@ -351,7 +351,7 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
             WRITE (*,*) 'No reading iteration checkpoint required'
         ENDIF
         
-        CALL Info('CouplerSolver ', 'Readinging the data from Precice')    
+        CALL Info('CouplerSolver ', 'Reading data from preCICE')    
         CALL precicef_get_max_time_step_size(dt)
         
         !-------------------Sticking Precice Naming Convention-------------------------------------
