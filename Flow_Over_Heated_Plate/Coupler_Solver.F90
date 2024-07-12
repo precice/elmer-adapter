@@ -243,7 +243,6 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
     Mesh => Solver % Mesh
     solverParams => GetSolverParams()
     meshDim = Mesh % MaxDim
-    ! PRINT *, 'Mesh dimension is:', meshDim  
     
     rank = 0
     commsize = 1
