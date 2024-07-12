@@ -46,7 +46,6 @@
 
   <m2n:sockets acceptor="Solid" connector="Fluid" exchange-directory=".."/>
 
-
   <coupling-scheme:serial-explicit>
     <participants first="Solid" second="Fluid"/>
     <max-time value="1.0"/>
