@@ -384,7 +384,7 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
         END IF
 
         
-        !-------------------Advance Precice-------------------------------------------------------
+        !-------------------Advance preCICE-------------------------------------------------------
         CALL precicef_advance(dt)
         CALL precicef_is_coupling_ongoing(ongoing)
         
