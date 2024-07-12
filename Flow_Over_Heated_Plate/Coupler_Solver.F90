@@ -368,6 +368,7 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
 
         itask = 3
     case(3)
+
         !-------------------Copy Write values from Variable to buffer----------------------------
         CALL CopyWriteData(writeDataName,mesh,BoundaryPerm,writeData)
         CALL Info('CouplerSolver','Printing the write data (From Elmer to Precice)')
