@@ -371,8 +371,6 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
 
         !-------------------Copy Write values from Variable to buffer----------------------------
         CALL CopyWriteData(writeDataName,mesh,BoundaryPerm,writeData)
-        CALL Info('CouplerSolver','Printing the write data (From Elmer to Precice)')
-        ! CALL Print(writeDataName,mesh ,BoundaryPerm,CoordVals)
 
         !-------------------Sticking Precice Naming Convention-------------------------------------
         IF (writeDataName == 'temperature') THEN
