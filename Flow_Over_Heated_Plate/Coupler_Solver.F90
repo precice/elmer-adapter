@@ -212,7 +212,7 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
     !-------------------------Strings----------------------------------------------
     CHARACTER(LEN=MAX_NAME_LEN)         :: config
     CHARACTER(LEN=MAX_NAME_LEN)         :: participantName, meshName
-    CHARACTER(LEN=MAX_NAME_LEN)         :: readDataName,writeDataName
+    CHARACTER(LEN=MAX_NAME_LEN)         :: readDataName, writeDataName
 
     !-------------------------IDs-Integer----------------------------------------------
     INTEGER                         :: meshID,readDataID, writeDataID, meshDim
