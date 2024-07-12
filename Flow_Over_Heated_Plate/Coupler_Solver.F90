@@ -310,7 +310,7 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
         !-----------------------------------------------------------------------------------------
 
         ! !---------------Initializing Precice------------------------------------------ 
-        CALL Info('CouplerSolver','Initializing Precice')     
+        CALL Info('CouplerSolver','Initializing preCICE')     
         CALL precicef_create(participantName, config, rank, commsize)
         
         CALL Info('CouplerSolver','Setting up mesh in Precice')
