@@ -258,7 +258,7 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
         BoundaryName = GetString( Simulation, 'maskName', Found )
         participantName = GetString( Simulation, 'participantName', Found )
         
-        !-----------------Convert to Precice Naming Convention    
+        !-----------------Convert to preCICE Naming Conventions
         IF (participantName == 'solid') THEN
             participantName = 'Solid'
         END IF
