@@ -277,6 +277,7 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
         config = GetString( Simulation, 'configPath', Found )
 
         Print *, TRIM(BoundaryName)," ",TRIM(participantName)," ",TRIM(meshName)," ",TRIM(config)
+        
          !-----------Identify Vertex on Coupling Interface & Save Coordinates--------------------
         NULLIFY( BoundaryPerm )    
         ALLOCATE( BoundaryPerm( Mesh % NumberOfNodes ) )
