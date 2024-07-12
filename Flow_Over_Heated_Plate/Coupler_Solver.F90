@@ -394,7 +394,7 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
         !-----------------------------------------------------------------------------------------
 
     case(4)
-        CALL Info('CouplerSolver','Precice Finalize')
+        CALL Info('CouplerSolver','preCICE Finalize')
         CALL precicef_finalize()
 
         ! DEALLOCATE(writeData)
