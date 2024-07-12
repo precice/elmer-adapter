@@ -364,8 +364,6 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
         END IF
 
         CALL CopyReadData(readDataName,mesh,BoundaryPerm,readData)
-        CALL Info('CouplerSolver','Printing the read data(From Precice to Elmer)')
-        ! CALL Print(readDataName,mesh ,BoundaryPerm,CoordVals)
         !-----------------------------------------------------------------------------------------
 
         itask = 3
