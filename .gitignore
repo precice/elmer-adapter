@@ -34,3 +34,4 @@ Partitioned_Heat_Conduction/fenics
 
 # ignore log files
 *.log
+*.msh
