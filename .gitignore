@@ -29,6 +29,8 @@ Partitioned_Heat_Conduction/fenics
 
 # ignoring precice run directory
 */precice-run
+*precice-profiling
+
 
 # ignore log files
 *.log
