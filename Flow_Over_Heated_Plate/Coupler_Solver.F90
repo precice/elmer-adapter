@@ -208,7 +208,7 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
     TYPE(Variable_t), POINTER :: TimeVar
     Real(KIND=dp) :: Time
 
-    !--------------------------Precice-Variables-------------------------------------
+    !--------------------------preCICE-Variables-------------------------------------
     !-------------------------Strings----------------------------------------------
     CHARACTER(LEN=MAX_NAME_LEN)         :: config
     CHARACTER(LEN=MAX_NAME_LEN)         :: participantName, meshName
@@ -250,14 +250,14 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
     case(1)
         CALL Info('CouplerSolver ', 'Initializing Coupler Solver')
         !--- First Time Visited, Initialization
-        !-- First Time Visit, Create Precice, create nodes at interface
+        !-- First Time Visit, Create preCICE, create nodes at interface
         !----------------------------- Initialize---------------------
         
         !----------------Acquire Names for solver---------------------
         BoundaryName = GetString( Simulation, 'maskName', Found )
         participantName = GetString( Simulation, 'participantName', Found )
         
-        !-----------------Convert to preCICE Naming Conventions
+        !-----------------Convert to preCICE Naming Convention    
         IF (participantName == 'solid') THEN
             participantName = 'Solid'
         END IF
@@ -278,7 +278,7 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
 
         Print *, TRIM(BoundaryName)," ",TRIM(participantName)," ",TRIM(meshName)," ",TRIM(config)
         
-         !-----------Identify Vertex on Coupling Interface & Save Coordinates--------------------
+        !-----------Identify Vertex on Coupling Interface & Save Coordinates--------------------
         NULLIFY( BoundaryPerm )    
         ALLOCATE( BoundaryPerm( Mesh % NumberOfNodes ) )
         BoundaryPerm = 0
@@ -309,7 +309,7 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
         CALL CreateVariable(writeDataName,'writeDataName',mesh,BoundaryPerm,Solver,solverParams)
         !-----------------------------------------------------------------------------------------
 
-        ! !---------------Initializing Precice------------------------------------------ 
+        ! !---------------Initializing preCICE------------------------------------------ 
         CALL Info('CouplerSolver','Initializing preCICE')     
         CALL precicef_create(participantName, config, rank, commsize)
         
@@ -351,10 +351,10 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
             WRITE (*,*) 'No reading iteration checkpoint required'
         ENDIF
         
-        CALL Info('CouplerSolver ', 'Reading data from preCICE')    
+        CALL Info('CouplerSolver ', 'Readinging the data from preCICE')    
         CALL precicef_get_max_time_step_size(dt)
         
-        !-------------------Sticking Precice Naming Convention-------------------------------------
+        !-------------------Sticking preCICE Naming Convention-------------------------------------
         IF (readDataName == 'temperature') THEN
             CALL precicef_read_data(meshName, 'Temperature', BoundaryNodes, vertexIDs, dt, readData)
         ELSE IF (readDataName == 'temperature flux_abs') THEN
@@ -372,7 +372,7 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
         !-------------------Copy Write values from Variable to buffer----------------------------
         CALL CopyWriteData(writeDataName,mesh,BoundaryPerm,writeData)
 
-        !-------------------Sticking Precice Naming Convention-------------------------------------
+        !-------------------Sticking preCICE Naming Convention-------------------------------------
         IF (writeDataName == 'temperature') THEN
             CALL precicef_write_data(meshName, 'Temperature', BoundaryNodes, vertexIDs, writeData)
         ELSE IF (writeDataName == 'temperature flux_abs') THEN
