@@ -103,11 +103,6 @@ MODULE HelperMethods
             CALL Info('CouplerSolver','Using existing variable : '//TRIM(dataName) )
         ELSE
             CALL FATAL('CouplerSolver', 'Variable does not exist : ' // TRIM(dataName) )
-            ! Dofs = ListGetInteger( solverParams,'Field Dofs',Found )
-            ! IF(.NOT. Found ) Dofs = 1
-            ! CALL VariableAddVector( mesh % Variables, mesh, Solver, dataName, Dofs, &
-            !     Perm = BoundaryPerm, Secondary = .TRUE. )
-            ! dataVariable => VariableGet( mesh % Variables, dataName ) 
         END IF
 
 
