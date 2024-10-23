@@ -1,14 +1,13 @@
 # elmer-adapter
-**experimental** preCICE-adapter for the open source multiphysical simulation software Elmer FEM
 
-# Getting started
+**experimental** preCICE-adapter for the open source multiphysical simulation software Elmer FEM
 
 ## Dependencies & Installation Instructions
 
 * preCICE
     * Recommended: Install debian package, please refer to https://precice.org/installation-overview.html for installation
 * Elmer
-    * Recommended: Install debian package, please refer to http://www.elmerfem.org/blog/binaries/ 
+    * Recommended: Install debian package, please refer to http://www.elmerfem.org/blog/binaries/
 
 ## Use the adapter
 

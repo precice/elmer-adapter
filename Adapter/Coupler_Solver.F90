@@ -338,15 +338,15 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
         itask = 2
     case(2)
         !-------------------Copy Read values from Variable to buffer---------------------
-        CALL precicef_requires_reading_checkpoint(bool)
+        CALL precicef_requires_writing_checkpoint(bool)
 
         IF (bool.EQ.1) THEN
-            WRITE (*,*) 'DUMMY: Reading iteration checkpoint'
+            WRITE (*,*) 'DUMMY: Writing iteration checkpoint'
         ELSE
-            WRITE (*,*) 'No reading iteration checkpoint required'
+            WRITE (*,*) 'Writing iteration checkpoint is not required'
         ENDIF
         
-        CALL Info('CouplerSolver ', 'Readinging the data from preCICE')    
+        CALL Info('CouplerSolver ', 'Reading the data from preCICE')    
         CALL precicef_get_max_time_step_size(dt)
         
         !-------------------Sticking preCICE Naming Convention-------------------------------------
@@ -380,6 +380,14 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
         !-------------------Advance preCICE-------------------------------------------------------
         CALL precicef_advance(dt)
         CALL precicef_is_coupling_ongoing(ongoing)
+
+        CALL precicef_requires_reading_checkpoint(bool)
+
+        IF (bool.EQ.1) THEN
+            WRITE (*,*) 'DUMMY: Reading iteration checkpoint'
+        ELSE
+            WRITE (*,*) 'Reading iteration checkpoint is not required'
+        ENDIF
         
         IF(ongoing.EQ.0) THEN
             itask = 4
