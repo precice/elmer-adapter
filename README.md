@@ -11,7 +11,7 @@
 
 ## Use the adapter
 
-The adapter uses a custom-made Elmer solver for coupling with preCICE. This solver is compiled using `elmerf90` and then plugged into the `case.sif` file in a minimally-invaisve fashion. Examples for usage of the adapter can be found in `Partitioned_Heat_Conduction` and `Flow_Over_Heated_Plate`. For new users it is recommended to use these cases as a starting point. You can refer to the documentation of `Partitioned_Heat_Conduction` for all necessary steps.
+The adapter uses a custom-made Elmer solver for coupling with preCICE. This solver is compiled using `elmerf90` and then plugged into the `case.sif` file in a minimally-invasive fashion. Examples for usage of the adapter can be found in `Partitioned_Heat_Conduction` and in the preCICE tutorial [flow-over-heated-plate](https://precice.org/tutorials-flow-over-heated-plate.html). For new users it is recommended to look at the tutorial case as a starting point. Refer to the README in `Partitioned_Heat_Conduction/` for all necessary steps.
 
 ## How to couple your own code
 
@@ -29,10 +29,12 @@ Currently, implicit coupling is not supported by the adapter. Parallelization an
 
 Partitioned heat equation is thoroughly tested for explicit coupling and gives correct results for an Elmer-Elmer coupling and for Elmer-FEniCS coupling (where Elmer is the Dirichlet participant). If Elmer is the Neumann participant in Elmer-FEniCS coupling, problems occur (probably due to the flux computation, see thesis of Hisham Saeed for details).
 
-The example case `Perpendicular_Flap` is currently only a monolithic simulation, but a good starting point for FSI. See (the perpendicular flap tutorial)[https://github.com/precice/tutorials/tree/master/perpendicular-flap] for details.
+The example case `Perpendicular_Flap` is currently only a monolithic simulation, but a good starting point for FSI. See [the perpendicular flap tutorial](https://github.com/precice/tutorials/tree/master/perpendicular-flap) for details.
 
 `Coupler_Solver.F90` is currently duplicated for every example.
 
-# Development History
+## Development History
 
 The initial version of this adapter was developed by [Hisham Saeed](https://github.com/HishamSaeed) during his work on his [master's thesis](https://mediatum.ub.tum.de/604993?query=hisham&show_id=1636717&srcnodeid=604993) under supervision of [Benjamin Rodenberg](https://www.in.tum.de/i05/personen/personen/benjamin-rodenberg/).
+
+The adapter was updated for preCICE v3 by [Alihossein Sepahvand](https://github.com/tapegoji).
