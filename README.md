@@ -2,20 +2,24 @@
 
 **experimental** preCICE-adapter for the open source multiphysical simulation software Elmer FEM
 
-## Dependencies & Installation Instructions
+## Dependencies
 
-* preCICE
-    * Recommended: Install debian package, please refer to https://precice.org/installation-overview.html for installation
-* Elmer
-    * Recommended: Install debian package, please refer to http://www.elmerfem.org/blog/binaries/
+* preCICE: please refer to [installation documentation](https://precice.org/installation-overview.html).
+* Elmer: please refer to [Elmer documentation](http://www.elmerfem.org/blog/binaries/).
+
+## Build the adapter
+
+The adapter is called during runtime by Elmer. It is developed as a standalone library of Elmer features, so it has to be built before running the simulation. For building, Elmer provides a FORTRAN wrapper to make sure that code compiled by the user is compatible with `ElmerSolver`.
+
+To build the adapter, run the script `Adapter/build.sh`. If Elmer is installed, this script should work out of the box.
 
 ## Use the adapter
 
-The adapter uses a custom-made Elmer solver for coupling with preCICE. This solver is compiled using `elmerf90` and then plugged into the `case.sif` file in a minimally-invasive fashion. Examples for usage of the adapter can be found in `Partitioned_Heat_Conduction` and in the preCICE tutorial [flow-over-heated-plate](https://precice.org/tutorials-flow-over-heated-plate.html). For new users it is recommended to look at the tutorial case as a starting point. Refer to the README in `Partitioned_Heat_Conduction/` for all necessary steps.
+Examples for usage of the adapter can be found in `Partitioned_Heat_Conduction` and in the preCICE tutorial [flow-over-heated-plate](https://precice.org/tutorials-flow-over-heated-plate.html). For new users it is recommended to look at the tutorial case as a starting point. Refer to the README in `Partitioned_Heat_Conduction/` for all necessary steps.
 
 ## How to couple your own code
 
-We assume you already have your own application in Elmer and you want to couple it to another solver using preCICE. Your application includes a `case.sif` file and the required mesh files.
+Assuming you already have a `case.sif` file and the required mesh files, follow the steps:
 
 1. Take one of the existing example cases and copy the `Coupler_Solver.F90` from there into your project folder.
 2. Use the provided instructions to compile the adapter.

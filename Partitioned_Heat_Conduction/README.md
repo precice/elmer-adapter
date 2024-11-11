@@ -1,8 +1,8 @@
 # Example Problem: Partitioned heat conduction
 
-This is an example problem to qualify Data communication of data communication developed in the adapter. Refer to [the preCICE tutorials](https://github.com/precice/tutorials/tree/master/partitioned-heat-conduction) for a detailed explanation of the case.
+Refer to [partitioned heat conduction tutorial](https://github.com/precice/tutorials/tree/master/partitioned-heat-conduction) for a detailed explanation of the case.
 
-# Contents of this folder
+## Contents of this folder
 
 * `Coupler_Solver.F90`: The source code for the actual adapter.
 * `precice-config.xml`: A preCICE configuration for explicit coupling.
@@ -12,20 +12,15 @@ This is an example problem to qualify Data communication of data communication d
     * `<Mesh_Name>.geo`: This is the gmsh file to build geometry and generate the `.msh` file that defines mesh.
     * `<Mesh_Name>.msh`: This is the `.msh` file for ElmerSolver. It can be generated from the `.geo` file using gmsh, but it is provided in this repository for convenience
 
-# Build the adapter
-
-The adapter is called during runtime by Elmer, it is developed as user defined code provided by Elmer features, so it has to be built before running the simulation. For building, Elmer provides a FORTRAN wrapper to make sure that code compiled by the user is compatible with `ElmerSolver`. Make sure that preCICE is correctly installed and linked, when building the adapter (see [here](https://precice.org/installation-source-installation.html)).
-
-To compile the adapter, run `elmerf90 -o <Output File Name> <Fortran File> --additional-flags`. For this example: run `elmerf90 -o Coupler_Solver.so Coupler_Solver.F90 -lprecice` from this folder. This will create the actual adapter binray `Coupler_Solver.so` that will be used by Elmer to couple the code.
-
-# Running the example
+## Running the example
 
 The example is provided in three different versions: A reference case, where the problem is solved monolithically and a Dirichlet and Neumann solver, which can be used for computing either side of the domain. For all three cases the same steps must be executed:
 
 1. Go To `Reference_Problem/`, `Dirichlet_Participant/` or `Neumann_Participant/` - depending on what you want to do.
 2. Generate mesh: type `ElmerGrid 14 2 <Mesh_Name>.msh`.
-3. Run the simulation: type `ElmerSolver case.sif`. For the monolithic case you only need to run a single processes. For the partitioned case you have to run two processes in independent terminals.
-4. Visulaize results: results are stored in the results folder (`out`) and may be visualized using Paraview.
+3. Link or copy over the compiled adapter library files (`.so`).
+4. Run the simulation  `ElmerSolver case.sif`. For the monolithic case you only need to run a single processes. For the partitioned case you have to run two processes in independent terminals.
+5. Visualize results: results are stored in the results folder (`out`) and may be visualized using Paraview.
 
 **Hint** Results in other examples not necessarily exist in Results folder, the location can be modified in `.sif` file.
 
@@ -40,9 +35,10 @@ This scenario uses two independent Elmer simulations. One for the Dirichlet part
 **RESTRICTION** This case only works, if the Elmer solver is the Dirichlet participant and the FEniCS solver is the Neumann participant.
 
 ### Preparation
+
 Copy the `fenics` case from [the preCICE tutorials](https://github.com/precice/tutorials/tree/master/partitioned-heat-conduction) into this folder (`Partitioned_Heat_Conduction/`) (tested for https://github.com/precice/tutorials/tree/v202104.1.1). This should result in the following folder structure:
 
-```
+```bash
 Partitioned_Heat_Conduction/
 ├── Coupler_Solver.F90
 ├── Coupler_Solver.so
@@ -60,7 +56,7 @@ Partitioned_Heat_Conduction/
 
 Then, install all dependencies that are required for running the FEniCS-FEniCS partitioned heat conduction case.
 
-**IMPORTANT**
+**NOTE**
 
 * Please replace `fenics/precice-adapter-config-N.json` with the modified `precice-adapter-config-N.json` from this folder.
 * Comment out the error check `assert (error_total < total_error_tol)` in `fenics/errorcomputation.py`.
@@ -69,7 +65,7 @@ Then, install all dependencies that are required for running the FEniCS-FEniCS p
 
 Follow the steps described above for running `Dirichlet_Participant/`. Run the FEniCS participant as a Neumann solver following the instructions [in the preCICE tutorials](https://github.com/precice/tutorials/tree/master/partitioned-heat-conduction).
 
-# Detailed explanation (for advanced users and developers)
+## Detailed explanation (for advanced users and developers)
 
 ## Mesh preparation
 
@@ -77,7 +73,7 @@ Follow the steps described above for running `Dirichlet_Participant/`. Run the F
 
 The `.geo` file defines the geometry and the mesh generator using gmsh, it definies the 2x2 Plate and its 3 boundaries it can be open using gmsh,just make sure that gmsh is installed and run at the current directory. The mesh is a uniform rectangular mesh, you can adjust its size but changing the number of points on the lines using a text editor.
 
-These steps are required if the user wants to create a `.msh` file, gmsh software is required, open the `.geo` in gmsh by running the command `gmsh <FileName>.geo`. You can also refer to (this tutorial)[https://www.youtube.com/watch?v=O1FyiBBuN98&ab_channel=JoshTheEngineer].
+These steps are required if the user wants to create a `.msh` file, gmsh software is required, open the `.geo` in gmsh by running the command `gmsh <FileName>.geo`. You can also refer to [this tutorial](https://www.youtube.com/watch?v=O1FyiBBuN98&ab_channel=JoshTheEngineer).
 
 ### Generating Mesh Files for Elmer (required)
 
