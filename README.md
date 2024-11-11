@@ -15,7 +15,7 @@ To build the adapter, run the script `Adapter/build.sh`. If Elmer is installed, 
 
 ## Use the adapter
 
-Examples for usage of the adapter can be found in `Partitioned_Heat_Conduction` and in the preCICE tutorial [flow-over-heated-plate](https://precice.org/tutorials-flow-over-heated-plate.html). For new users it is recommended to look at the tutorial case as a starting point. Refer to the README in `Partitioned_Heat_Conduction/` for all necessary steps.
+Examples for usage of the adapter can be found in the `Partitioned_Heat_Conduction/` folder and in the preCICE tutorial [flow-over-heated-plate](https://precice.org/tutorials-flow-over-heated-plate.html). For new users it is recommended to look at the tutorial case as a starting point.
 
 ## How to couple your own code
 
@@ -35,10 +35,7 @@ Partitioned heat equation is thoroughly tested for explicit coupling and gives c
 
 The example case `Perpendicular_Flap` is currently only a monolithic simulation, but a good starting point for FSI. See [the perpendicular flap tutorial](https://github.com/precice/tutorials/tree/master/perpendicular-flap) for details.
 
-`Coupler_Solver.F90` is currently duplicated for every example.
-
 ## Development History
 
-The initial version of this adapter was developed by [Hisham Saeed](https://github.com/HishamSaeed) during his work on his [master's thesis](https://mediatum.ub.tum.de/604993?query=hisham&show_id=1636717&srcnodeid=604993) under supervision of [Benjamin Rodenberg](https://www.in.tum.de/i05/personen/personen/benjamin-rodenberg/).
-
-The adapter was updated for preCICE v3 by [Alihossein Sepahvand](https://github.com/tapegoji).
+* The initial version of this adapter was developed by [Hisham Saeed](https://github.com/HishamSaeed) during his work on his [master's thesis](https://mediatum.ub.tum.de/604993?query=hisham&show_id=1636717&srcnodeid=604993) under supervision of [Benjamin Rodenberg](https://www.in.tum.de/i05/personen/personen/benjamin-rodenberg/).
+* The adapter and the flow over heated plate tutorial case were updated for preCICE version 3 by [Alihossein Sepahvand](https://github.com/tapegoji).
