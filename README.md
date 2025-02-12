@@ -11,7 +11,7 @@
 
 The adapter is called during runtime by Elmer. It is developed as a standalone library of Elmer features, so it has to be built before running the simulation. For building, Elmer provides a FORTRAN wrapper to make sure that code compiled by the user is compatible with `ElmerSolver`.
 
-To build the adapter, run the script `Adapter/build.sh`. If Elmer is installed, this script should work out of the box.
+To build the adapter, navigate to the folder `Adapter` and run `make`. If Elmer is installed correctly, this should work out of the box.
 
 ## Use the adapter
 
