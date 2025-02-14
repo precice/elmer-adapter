@@ -45,7 +45,7 @@ End
 Solver 1
   Equation = Heat Equation
   Procedure = "HeatSolve" "HeatSolver"
-  Variable = Temperature
+  Variable = temperature
   Calculate Loads = Logical True
   Exec Solver = Always
   Stabilize = True
@@ -75,7 +75,7 @@ Solver 2
  Equation = "flux compute"
  Procedure = "FluxSolver" "FluxSolver"
  Calculate Flux = Logical True
- Flux Variable = String Temperature
+ Flux Variable = String temperature
  Flux Coefficient = String "Heat Conductivity"
  Linear System Solver = "Iterative"
  Linear System Iterative Method = "cg"
@@ -89,7 +89,7 @@ Solver 3
     Equation = "Initialize"
     Procedure = "../Coupler_Solver.so" "CouplerSolver"
     readDataName = String "temperature flux 1"
-    writeDataName = String "Temperature"
+    writeDataName = String "temperature"
     Exec Solver = before all
 End
 
@@ -97,7 +97,7 @@ Solver 4
     Equation = "ReadData"
     Procedure = "../Coupler_Solver.so" "CouplerSolver"
     readDataName = String "temperature flux 1"
-    writeDataName = String "Temperature"
+    writeDataName = String "temperature"
     Exec Solver = before timestep 
 End
 
@@ -105,7 +105,7 @@ Solver 5
     Equation = "writeDataAdvance"
     Procedure = "../Coupler_Solver.so" "CouplerSolver"
     readDataName = String "temperature flux 1"
-    writeDataName = String "Temperature"
+    writeDataName = String "temperature"
     Exec Solver = after timestep 
 End
 
@@ -113,7 +113,7 @@ Solver 6
     Equation = "Finalize"
     Procedure = "../Coupler_Solver.so" "CouplerSolver"
     readDataName = String "temperature flux 1"
-    writeDataName = String "Temperature"
+    writeDataName = String "temperature"
     Exec Solver = after all 
 End
 
@@ -130,7 +130,7 @@ End
 
 Initial Condition 1
   Name = "Temp_Init"
-  Temperature  = Variable Coordinate
+  temperature  = Variable Coordinate
                Real MATC "1 + (tx(0)^2) + (3 * (tx(1) ^ 2))"
 End
 
@@ -144,10 +144,10 @@ Boundary Condition 1
   Target Boundaries(1) = 2 
   Name = "Neumann_Coupling"
   Heat Flux = Equals "temperature flux 1"
-  !Temperature Load = Equals "temperature loads"
-  !Temperature Load = Variable Coordinate 2
+  !temperature Load = Equals "temperature loads"
+  !temperature Load = Variable Coordinate 2
   !             Real Procedure "UDF_Boundary" "SetLoads"
-  !Temperature = Variable Coordinate
+  !temperature = Variable Coordinate
   !      Real MATC "1 + (tx(0)^2) + (2 * (tx(1) ^ 2))"
   Coupler Interface = Logical True
 End
@@ -155,6 +155,6 @@ End
 Boundary Condition 2
   Target Boundaries(1) = 1 
   Name = "Plate_Boundary"
-  Temperature = Variable Time,Coordinate
+  temperature = Variable Time,Coordinate
         Real MATC "1.3 * tx(0) + 1 + (tx(1)^2) + (3 * (tx(2) ^ 2))"
 End
