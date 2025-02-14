@@ -17,7 +17,7 @@ The example is provided in three different versions: A reference case, where the
 
 1. Go To `Reference_Problem/`, `Dirichlet_Participant/` or `Neumann_Participant/` - depending on what you want to do.
 2. Generate mesh: type `ElmerGrid 14 2 <Mesh_Name>.msh`.
-3. Link or copy over the compiled adapter library files (`.so`).
+3. Link or copy over the compiled adapter library files (`.so`) to this folder (`Partitioned_Heat_Conduction`).
 4. Run the simulation  `ElmerSolver case.sif`. For the monolithic case you only need to run a single processes. For the partitioned case you have to run two processes in independent terminals.
 5. Visualize results: results are stored in the results folder (`out`) and may be visualized using Paraview.
 
