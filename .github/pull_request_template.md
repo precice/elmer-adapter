@@ -7,7 +7,7 @@ Briefly summarize main changes
 ## Motivation and additional information
 
 <!--
-Short rational why preCICE needs this change. If this is already described in an issue a link to that issue (closes #123) is sufficient.
+Short rational why the adapter needs this change. If this is already described in an issue a link to that issue (closes #123) is sufficient.
 -->
 
 ## Author's checklist
