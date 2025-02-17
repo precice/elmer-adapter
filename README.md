@@ -35,6 +35,12 @@ Partitioned heat equation is thoroughly tested for explicit coupling and gives c
 
 The example case `Perpendicular_Flap` is currently only a monolithic simulation, but a good starting point for FSI. See [the perpendicular flap tutorial](https://github.com/precice/tutorials/tree/master/perpendicular-flap) for details.
 
+## Troubleshooting
+
+### I cannot visualize my results with Paraview
+
+Please make sure to use Paraview version >= 5.12. You can check your Paraview version by running `paraview --version` from the command line.
+
 ## Development History
 
 * The initial version of this adapter was developed by [Hisham Saeed](https://github.com/HishamSaeed) during his work on his [master's thesis](https://mediatum.ub.tum.de/604993?query=hisham&show_id=1636717&srcnodeid=604993) under supervision of [Benjamin Rodenberg](https://www.in.tum.de/i05/personen/personen/benjamin-rodenberg/).
