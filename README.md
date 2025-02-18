@@ -41,7 +41,13 @@ The example case `Perpendicular_Flap` is currently only a monolithic simulation,
 
 Please make sure to use Paraview version >= 5.12. You can check your Paraview version by running `paraview --version` from the command line.
 
+## Citing
+
+* Elmer-preCICE: If you are using this adapter (Elmer-preCICE), please consider citing the [thesis of Hisham Saeed](https://mediatum.ub.tum.de/1636717).
+* preCICE: preCICE is an academic project, developed at the [Technical University of Munich](https://www5.in.tum.de/) and at the [University of Stuttgart](https://www.ipvs.uni-stuttgart.de/). If you use preCICE, please [cite preCICE](https://precice.org/publications.html#how-to-cite-precice).
+* Elmer: If you are using Elmer, please also consider citing the [Elmer repository](https://github.com/ElmerCSC/elmerfem/blob/devel/CITATION.cff).
+
 ## Development History
 
-* The initial version of this adapter was developed by [Hisham Saeed](https://github.com/HishamSaeed) during his work on his [master's thesis](https://mediatum.ub.tum.de/604993?query=hisham&show_id=1636717&srcnodeid=604993) under supervision of [Benjamin Rodenberg](https://www.in.tum.de/i05/personen/personen/benjamin-rodenberg/).
+* The initial version of this adapter was developed by [Hisham Saeed](https://github.com/HishamSaeed) during his work on his [master's thesis](https://mediatum.ub.tum.de/1636717) under supervision of [Benjamin Rodenberg](https://www.in.tum.de/i05/personen/personen/benjamin-rodenberg/).
 * The adapter and the flow over heated plate tutorial case were updated for preCICE version 3 by [Alihossein Sepahvand](https://github.com/tapegoji).
