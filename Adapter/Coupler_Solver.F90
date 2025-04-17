@@ -239,8 +239,8 @@ SUBROUTINE CouplerSolver( Model,Solver,dt,TransientSimulation)
     solverParams => GetSolverParams()
     meshDim = Mesh % MaxDim
     
-    rank = 0
-    commsize = 1
+    rank = ParEnv % MyPe
+    commsize = ParEnv % PEs
     select case(itask)
     case(1)
         CALL Info('CouplerSolver ', 'Initializing Coupler Solver')
